@@ -171,6 +171,18 @@ namespace zum
             List<ZumController> noPawns = Controllers.FindAll(zc => zc.PossessedPawn == null);
             noPawns.ForEach(zc => ZumFactory.Instance.CreatePawn(zc));
         }
+
+        public ZumPawn GetRandomPawn()
+        {
+            List<ZumController> hasPawns = Controllers.FindAll(zc => zc.PossessedPawn != null);
+            if (hasPawns.Count == 0)
+            {
+                return null;
+            }
+            int k = Random.Range(0, hasPawns.Count);
+            return hasPawns[k].PossessedPawn as ZumPawn;
+        }
+
         public void DestroyPawns()
         {
             foreach (var zc in Controllers)

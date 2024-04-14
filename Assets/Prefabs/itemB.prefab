@@ -83,10 +83,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: itemB
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f31189ca95bb25449b26665cdc73dcb6,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f31189ca95bb25449b26665cdc73dcb6,
+        type: 3}
+      insertIndex: 1
+      addedObject: {fileID: -3139558478833699172}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f31189ca95bb25449b26665cdc73dcb6,
         type: 3}
       insertIndex: -1
@@ -95,6 +104,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2993411842746670070}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f31189ca95bb25449b26665cdc73dcb6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6257647559805028621}
   m_SourcePrefab: {fileID: 100100000, guid: f31189ca95bb25449b26665cdc73dcb6, type: 3}
 --- !u!1 &8961437614665805592 stripped
 GameObject:
@@ -102,6 +115,32 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 8114367045412819529}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &-3139558478833699172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8961437614665805592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699a949a77ca48e41ab165c7384b8ba4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MineralMachine:
+    CurrentState:
+      enumName: 
+      idx: 0
+    PreviousState:
+      enumName: 
+      idx: 0
+    failedState:
+      enumName: 
+      idx: 0
+    stateList: []
+    isInitialized: 0
+    timeInState: 0
+  MagnetizeToPawn: 0
 --- !u!54 &1391135054804669592
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -150,3 +189,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.008395063
   m_Center: {x: 0, y: 0, z: 0.010000001}
+--- !u!114 &6257647559805028621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8961437614665805592}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56270d36cd867c4478f499f11d0f4f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hue: 0
+  Sat: 0
+  Lightness: 0

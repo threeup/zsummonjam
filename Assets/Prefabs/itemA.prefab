@@ -95,6 +95,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -104,12 +109,20 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
         type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 5556618867755884341}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
+        type: 3}
       insertIndex: -1
       addedObject: {fileID: 2133234468551590147}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2068768606666116919}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4021367921229955624}
   m_SourcePrefab: {fileID: 100100000, guid: 5b55ba12df41d4e48aef6df9ad2ce4e4, type: 3}
 --- !u!1 &426657359301192996 stripped
 GameObject:
@@ -117,6 +130,34 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 660519835498254453}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5556618867755884341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426657359301192996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 699a949a77ca48e41ab165c7384b8ba4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MineralMachine:
+    CurrentState:
+      enumName: 
+      idx: 0
+    PreviousState:
+      enumName: 
+      idx: 0
+    failedState:
+      enumName: 
+      idx: 0
+    stateList: []
+    isInitialized: 0
+    timeInState: 0
+  MagnetizeToPawn: 0
+  AttractingSpeed: 5
+  AttachedSpeed: 10
 --- !u!54 &2133234468551590147
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -165,3 +206,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.012499999
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-4021367921229955624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 426657359301192996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56270d36cd867c4478f499f11d0f4f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Hue: 0
+  Sat: 0
+  Lightness: 0
