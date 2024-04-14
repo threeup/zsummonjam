@@ -7,6 +7,7 @@ namespace zum
     public class ZumMaterial : MonoBehaviour
     {
         private Renderer _renderer;
+        public bool Randomize = true;
 
         public float Hue;
         public float Sat;
@@ -16,9 +17,12 @@ namespace zum
         {
             _renderer = GetComponent<Renderer>();
 
-            Hue = Random.Range(0.0f, 1.0f);
-            Sat = Random.Range(0.7f, 1.0f);
-            Lightness = Random.Range(0.7f, 1.0f);
+            if (Randomize)
+            {
+                Hue = Random.Range(0.0f, 1.0f);
+                Sat = Random.Range(0.7f, 1.0f);
+                Lightness = Random.Range(0.7f, 1.0f);
+            }
 
             ApplyColor();
         }

@@ -144,12 +144,6 @@ namespace zum
         public void Update()
         {
             MineralMachine.MachineUpdate(Time.deltaTime);
-
-            //debug
-            if (MagnetizeToPawn && !HasPawn())
-            {
-                _pawn = ZumBoss.Instance.GetRandomPawn();
-            }
         }
 
     }
