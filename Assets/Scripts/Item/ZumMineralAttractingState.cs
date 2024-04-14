@@ -28,7 +28,12 @@ namespace zum
         {
             ZumMineral mineral = (ZumMineral)owner;
             mineral.SetDesiredPositionAsPawn();
-            mineral.AdjustVelocityToTarget(mineral.AttractingSpeed);
+            float dotp = mineral.DotProductToPawnGrab();
+            if (dotp < 0.5f)
+            {
+                mineral.RequestPawnDisconnect();
+            }
+            mineral.AdjustVelocityToTarget(mineral.MaxAttractingSpeed * dotp);
             if (!mineral.HasPawn())
             {
                 mineral.MineralMachine.Withdraw();

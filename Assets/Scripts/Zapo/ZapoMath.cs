@@ -9,6 +9,13 @@ public static class ZapoMath
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
+
+    public static float DotProduct(GameObject go, Transform otherTransform, Vector3 otherDir)
+    {
+        Vector3 diff = Vector3.Normalize(go.transform.position - otherTransform.position);
+        return Vector3.Dot(diff, otherDir);
+    }
+
     public static float DistanceToObject(GameObject go, Vector3 pos)
     {
         if (!go)

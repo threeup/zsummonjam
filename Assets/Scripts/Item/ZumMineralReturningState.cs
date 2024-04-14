@@ -27,7 +27,7 @@ namespace zum
         public static void Update(float dt, object owner)
         {
             ZumMineral mineral = (ZumMineral)owner;
-            mineral.AdjustVelocityToTarget(mineral.AttractingSpeed);
+            mineral.AdjustVelocityToTarget(mineral.MaxAttractingSpeed);
             if (mineral.DistanceToOriginSq() < 0.25f)
             {
                 mineral.MineralMachine.Advance();

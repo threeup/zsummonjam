@@ -95,6 +95,10 @@ namespace zapo
         {
             return transform.TransformPoint(_charcontroller.center);
         }
+        public Vector3 RealForward()
+        {
+            return transform.forward;
+        }
 
         public float GetHorizontalSpeed()
         {

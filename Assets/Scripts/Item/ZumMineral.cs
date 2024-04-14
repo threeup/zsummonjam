@@ -24,19 +24,9 @@ namespace zum
 
         public bool MagnetizeToPawn = false;
 
-        public float AttractingSpeed = 5.0f;
+        public float MaxAttractingSpeed = 5.0f;
         public float AttachedSpeed = 10.0f;
 
-        public float DistanceToPawnSq()
-        {
-            if (_pawn != null)
-            {
-                return Vector3.SqrMagnitude(transform.position - _pawn.transform.position);
-            }
-            return 9999f;
-
-        }
-        public float DistanceToOriginSq() { return Vector3.SqrMagnitude(transform.position - _originPos); }
         private ZumPawn _pawn;
 
         private Rigidbody _rb;
@@ -72,6 +62,43 @@ namespace zum
             transform.position = _originPos;
             transform.forward = _originRot;
         }
+        public float DistanceToPawnSq()
+        {
+            if (_pawn != null)
+            {
+                return Vector3.SqrMagnitude(transform.position - _pawn.transform.position);
+            }
+            return 9999f;
+
+        }
+        public float DistanceToOriginSq()
+        {
+            return Vector3.SqrMagnitude(transform.position - _originPos);
+        }
+
+        public float DotProductToPawnGrab()
+        {
+            if (_pawn == null)
+            {
+                return -1.0f;
+            }
+            if (!_pawn.IsPointing)
+            {
+                return -1.0f;
+            }
+            return ZapoMath.DotProduct(gameObject, _pawn.GrabHandTransform, _pawn.RealForward());
+        }
+
+
+        public void AttractedBy(ZumPawn pawn)
+        {
+            _pawn = pawn;
+        }
+
+        public void RequestPawnDisconnect()
+        {
+            _pawn.RemAttractedMineral(this);
+        }
 
         public void SetDesiredPositionAsPawn()
         {
@@ -106,7 +133,6 @@ namespace zum
         public void Update()
         {
             MineralMachine.MachineUpdate(Time.deltaTime);
-
 
             //debug
             if (MagnetizeToPawn && !HasPawn())

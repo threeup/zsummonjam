@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using zapo;
 
@@ -5,6 +8,10 @@ namespace zum
 {
     public class ZumPawn : ZapoPawn
     {
+        public List<ZumMineral> Minerals = new();
+
+        [SerializeField]
+        private ZapoTimer AttractTimer;
 
         public AudioClip LandingAudioClip;
         public AudioClip[] FootstepAudioClips;
@@ -69,9 +76,13 @@ namespace zum
         private bool _hasAnimator;
         private bool _hasZumCtrlr;
 
+        public Transform GrabHandTransform;
+        public Transform ThrowHandTransform;
+
 
         private void Awake()
         {
+            AttractTimer = new ZapoTimer(0.5f, true, true);
             // get a reference to our main camera
             if (_mainCamera == null)
             {
@@ -265,7 +276,7 @@ namespace zum
             {
                 if (FootstepAudioClips.Length > 0)
                 {
-                    var index = Random.Range(0, FootstepAudioClips.Length);
+                    var index = UnityEngine.Random.Range(0, FootstepAudioClips.Length);
                     AudioSource.PlayClipAtPoint(FootstepAudioClips[index], RealCenter(), FootstepAudioVolume);
                 }
             }
@@ -349,6 +360,36 @@ namespace zum
                 _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
             }
         }
+
+        public void AddAttractedMineral(ZumMineral min)
+        {
+
+            min.AttractedBy(this);
+            Minerals.Add(min);
+        }
+
+        public void RemAttractedMineral(ZumMineral min)
+        {
+            min.AttractedBy(null);
+            Minerals.Remove(min);
+        }
+
+        public void MakeMinion()
+        {
+            List<Color> colors = new List<Color> { Color.blue, Color.gray, Color.yellow };
+
+            float legPower = 0.0f;
+            float torsoPower = 0.0f;
+            float armPower = 0.0f;
+            foreach (Color c in colors)
+            {
+                legPower = Math.Max(legPower, c.r);
+                torsoPower = Math.Max(torsoPower, c.r);
+                armPower = Math.Max(armPower, c.r);
+            }
+            ZumFactory.Instance.CreateMinion(this, legPower, torsoPower, armPower);
+        }
+
         protected override void Update()
         {
             // why do this often?
@@ -358,6 +399,26 @@ namespace zum
             base.Update();
             PointingCheck();
             Move();
+
+            if (IsPointing && AttractTimer.TimerTick(Time.deltaTime))
+            {
+                Vector3 center = GrabHandTransform.position;
+                GameObject[] gos = ZumFactory.Instance.GetSphereOverlapsItem(center, 5.0f);
+                foreach (GameObject go in gos)
+                {
+                    ZumMineral zm = go.GetComponent<ZumMineral>();
+                    if (zm == null || zm.HasPawn())
+                    {
+                        continue;
+                    }
+                    float dotp = ZapoMath.DotProduct(go, GrabHandTransform, RealForward());
+                    if (dotp > 0.5f)
+                    {
+                        AddAttractedMineral(zm);
+                    }
+                }
+
+            }
         }
 
         private void LateUpdate()

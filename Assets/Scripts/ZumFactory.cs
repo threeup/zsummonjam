@@ -11,12 +11,17 @@ namespace zum
         public GameObject npcCtrlrProto;
         public GameObject humanCtrlrProto;
         public GameObject pawnProto;
+        public GameObject minionProto;
 
         public List<GameObject> mineralsProto;
 
         public Cinemachine.CinemachineVirtualCamera cam;
 
         RaycastHit[] _rayResults = new RaycastHit[5];
+
+        Collider[] _sphereColliders = new Collider[50];
+
+        private List<GameObject> _sphereOverlapResult = new();
 
         public void Awake()
         {
@@ -67,6 +72,17 @@ namespace zum
             return go;
         }
 
+        public GameObject CreateMinion(ZumPawn pawn, float legPower, float torsoPower, float armPower)
+        {
+            if (minionProto == null)
+            {
+                return null;
+            }
+            GameObject go = Instantiate(minionProto);
+            go.name = "Minion-" + pawn.name;
+            return go;
+        }
+
         public RaycastHit? GetPlacePointingHit(float dist)
         {
             // Set the layer mask to default layers
@@ -94,6 +110,20 @@ namespace zum
         {
             this.transform.position = pos;
             this.transform.forward = dir;
+        }
+
+        public GameObject[] GetSphereOverlapsItem(Vector3 pos, float radius)
+        {
+
+            var layerMask = LayerMask.GetMask("Item");
+
+            _sphereOverlapResult.Clear();
+            int numColliders = Physics.OverlapSphereNonAlloc(pos, radius, _sphereColliders, layerMask);
+            for (int i = 0; i < numColliders; i++)
+            {
+                _sphereOverlapResult.Add(_sphereColliders[i].gameObject);
+            }
+            return _sphereOverlapResult.ToArray();
         }
 
     }
