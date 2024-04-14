@@ -129,7 +129,7 @@ namespace zum
             _targetPos = pos;
         }
 
-        public void AdjustVelocityToTarget(float speed)
+        public void MoveTowardTarget(float speed)
         {
             Vector3 dir = (_targetPos - transform.position).normalized;
             _rb.linearVelocity = dir * speed;

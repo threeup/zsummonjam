@@ -30,11 +30,11 @@ namespace zum
             mineral.SetDesiredPositionAsPawn();
             if (mineral.DistanceToPawnHandSq() > 0.1f)
             {
-                mineral.AdjustVelocityToTarget(mineral.AttachedSpeed);
+                mineral.MoveTowardTarget(mineral.AttachedSpeed);
             }
             else
             {
-                mineral.AdjustVelocityToTarget(0.1f);
+                mineral.MoveTowardTarget(0.1f);
             }
             if (!mineral.HasPawn())
             {

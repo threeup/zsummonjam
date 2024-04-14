@@ -126,5 +126,20 @@ namespace zum
             return _sphereOverlapResult.ToArray();
         }
 
+        public GameObject[] GetSphereOverlapsAutomaton(Vector3 pos, float radius)
+        {
+
+            var layerMask = LayerMask.GetMask("Automaton");
+
+            _sphereOverlapResult.Clear();
+            int numColliders = Physics.OverlapSphereNonAlloc(pos, radius, _sphereColliders, layerMask);
+            for (int i = 0; i < numColliders; i++)
+            {
+                _sphereOverlapResult.Add(_sphereColliders[i].gameObject);
+            }
+            return _sphereOverlapResult.ToArray();
+        }
+
+
     }
 }

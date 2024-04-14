@@ -51,7 +51,7 @@ MonoBehaviour:
     type: 3}
   pawnProto: {fileID: 3346989360146939413, guid: 6aa7b10a5c5de0749b3d57e572e7b6ab,
     type: 3}
-  minionProto: {fileID: 4820238332989301850, guid: 5b573b3805710c1498690f36ba8a2ae9,
+  minionProto: {fileID: 3856634306734643917, guid: 7748d67ff08083b4c8302a980238285f,
     type: 3}
   mineralsProto:
   - {fileID: 426657359301192996, guid: 44828e252cce98246a32d7f5bce61e39, type: 3}

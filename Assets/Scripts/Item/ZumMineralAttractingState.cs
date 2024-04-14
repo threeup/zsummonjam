@@ -38,7 +38,7 @@ namespace zum
             }
             if (mineral.HasPawn())
             {
-                mineral.AdjustVelocityToTarget(mineral.MaxAttractingSpeed * dotp);
+                mineral.MoveTowardTarget(mineral.MaxAttractingSpeed * dotp);
                 // try to be grabbed
                 mineral.MineralMachine.Advance();
             }

@@ -12,10 +12,16 @@ namespace zum
         }
         public static bool CanEnter(object owner)
         {
-            return true;
+            ZumAutomaton za = (ZumAutomaton)owner;
+            var cto = za.CanTargetOther();
+
+            Debug.Log(cto);
+            return za.CanTargetOther();
         }
         public static void OnEnter(object owner)
         {
+            ZumAutomaton za = (ZumAutomaton)owner;
+            za.SetOtherTarget();
         }
 
         public static void OnExit(object owner)
@@ -24,8 +30,11 @@ namespace zum
         public static void Update(float dt, object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            // check that it is in a real spot?
-            za.AutomatonMachine.Advance();
+            za.MoveTowardTarget(0.5f, true);
+            if (!za.HasOtherTarget())
+            {
+                za.AutomatonMachine.Withdraw();
+            }
 
         }
     }
