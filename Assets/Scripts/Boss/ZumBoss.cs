@@ -85,9 +85,10 @@ namespace zum
             }
         }
 
-        public void ResetFactoryPlace(float verticalOffset)
+        public void ResetFactoryPlace(float yPos)
         {
-            ZumFactory.Instance.SetPlace(_factoryOriginPos + Vector3.up * verticalOffset, _factoryOriginDir);
+            Vector3 nextPos = new Vector3(_factoryOriginPos.x, yPos, _factoryOriginPos.z);
+            ZumFactory.Instance.SetPlace(nextPos, _factoryOriginDir);
         }
 
         public bool MakeMinerals(int max)
@@ -107,7 +108,7 @@ namespace zum
             float forwardAmount = Random.Range(-1.0f, 1.0f);
             float rightAmount = Random.Range(-1.0f, 1.0f);
             Vector3 stepDir = Vector3.forward * forwardAmount + Vector3.right * rightAmount;
-            float stepDistance = 50.0f / max;
+            float stepDistance = 20.0f / max;
             for (int i = 0; i < max; ++i)
             {
                 int attempts = 0;
@@ -128,10 +129,17 @@ namespace zum
                 }
                 else
                 {
-                    ResetFactoryPlace(0.0f);
+                    if (Random.Range(0, 2) == 0)
+                    {
+                        ResetFactoryPlace(2.0f);
+                    }
+                    else
+                    {
+                        ResetFactoryPlace(5.5f);
+                    }
 
                 }
-                yield return new WaitForSeconds(.01f);
+                yield return new WaitForSeconds(.02f);
             }
 
             IsMineralMaking = false;

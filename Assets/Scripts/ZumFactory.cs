@@ -11,7 +11,7 @@ namespace zum
         public GameObject npcCtrlrProto;
         public GameObject humanCtrlrProto;
         public GameObject pawnProto;
-        public GameObject minionProto;
+        public GameObject automatonProto;
 
         public List<GameObject> mineralsProto;
 
@@ -72,14 +72,20 @@ namespace zum
             return go;
         }
 
-        public GameObject CreateMinion(ZumPawn pawn, float legPower, float torsoPower, float armPower)
+        public GameObject CreateAutomaton(string name, Vector3 startPos, Quaternion startRot,
+            float wingPower, float torsoPower, float firePower)
         {
-            if (minionProto == null)
+            if (automatonProto == null)
             {
                 return null;
             }
-            GameObject go = Instantiate(minionProto);
-            go.name = "Minion-" + pawn.name;
+            GameObject go = Instantiate(automatonProto, startPos, startRot);
+            go.name = name;
+            var zc = go.GetComponent<ZumCombatant>();
+            if (zc != null)
+            {
+                zc.SetCombatStats(wingPower, torsoPower, firePower);
+            }
             return go;
         }
 

@@ -13,9 +13,6 @@ namespace zum
         public static bool CanEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            var cto = za.CanTargetOther();
-
-            Debug.Log(cto);
             return za.CanTargetOther();
         }
         public static void OnEnter(object owner)

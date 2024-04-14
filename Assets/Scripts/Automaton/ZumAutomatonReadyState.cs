@@ -4,7 +4,8 @@ namespace zum
 {
     public static class ZumAutomatonReadyState
     {
-        public static float WALL = 25.0f;
+        public static float CLOUD = 9.0f;
+        public static float WALL = 20.0f;
         public static void Bind(ZapoState basicState)
         {
             basicState.CanEnter = CanEnter;
@@ -15,7 +16,7 @@ namespace zum
         public static bool CanEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            return za.transform.position.y > 10.0f;
+            return za.transform.position.y > CLOUD;
         }
         public static void OnEnter(object owner)
         {
@@ -56,7 +57,7 @@ namespace zum
         private static void MoveToSearchPosition(ZumAutomaton za)
         {
             Vector2 dir = UnityEngine.Random.insideUnitCircle;
-            za.SetDesiredPosition(new Vector3(dir.x * 20.0f, 10.0f, dir.y * 20.0f));
+            za.SetDesiredPosition(new Vector3(dir.x * 20.0f, CLOUD, dir.y * 20.0f));
         }
     }
 }

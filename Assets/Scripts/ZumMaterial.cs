@@ -13,6 +13,8 @@ namespace zum
         public float Sat;
         public float Lightness;
 
+        private Color _color;
+
         public void Start()
         {
             _renderer = GetComponent<Renderer>();
@@ -27,9 +29,15 @@ namespace zum
             ApplyColor();
         }
 
+        public Color GetColorAsRGB()
+        {
+            return _color;
+        }
+
         private void ApplyColor()
         {
-            _renderer.material.color = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
+            _color = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
+            _renderer.material.color = _color;
         }
     }
 }

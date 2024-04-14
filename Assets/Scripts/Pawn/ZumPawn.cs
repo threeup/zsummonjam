@@ -160,7 +160,15 @@ namespace zum
                 _animator.SetBool(_animIDThrowing, IsThrowing);
             }
             if (IsPointing) { PointingAmount += Time.deltaTime; } else { PointingAmount = 0; }
-            if (IsThrowing) { ThrowingAmount += Time.deltaTime; } else { ThrowingAmount = 0; }
+            if (IsThrowing) { ThrowingAmount += Time.deltaTime; }
+            else
+            {
+                if (ThrowingAmount > 2.0f)
+                {
+                    LaunchAutomatons();
+                }
+                ThrowingAmount = 0.0f;
+            }
             if (_hasAnimator)
             {
                 _animator.SetInteger(_animIDPointingAmount, (int)Mathf.Ceil(PointingAmount * 5f));
@@ -436,20 +444,38 @@ namespace zum
             return Vector3.zero;
         }
 
-        public void MakeMinion()
+        public void LaunchAutomatons()
         {
-            List<Color> colors = new List<Color> { Color.blue, Color.gray, Color.yellow };
 
-            float legPower = 0.0f;
+            List<Color> colors = new List<Color> { Color.black };
+            foreach (var pm in PrimedMinerals)
+            {
+                var zm = pm.GetComponentInChildren<ZumMaterial>();
+                if (zm != null)
+                {
+                    colors.Add(zm.GetColorAsRGB());
+                }
+            }
+
+
+            float wingPower = 0.0f;
             float torsoPower = 0.0f;
-            float armPower = 0.0f;
+            float firePower = 0.0f;
             foreach (Color c in colors)
             {
-                legPower = Math.Max(legPower, c.r);
-                torsoPower = Math.Max(torsoPower, c.r);
-                armPower = Math.Max(armPower, c.r);
+                wingPower = Math.Max(wingPower, c.b);
+                torsoPower = Math.Max(torsoPower, c.g);
+                firePower = Math.Max(firePower, c.r);
             }
-            ZumFactory.Instance.CreateMinion(this, legPower, torsoPower, armPower);
+            string name = "Dragon-" + this.name;
+            ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position, transform.rotation, wingPower, torsoPower, firePower);
+
+            while (PrimedMinerals.Count > 0)
+            {
+                var purged = PrimedMinerals[0];
+                PrimedMinerals.RemoveAt(0);
+                Destroy(purged.gameObject);
+            }
         }
 
         protected override void Update()

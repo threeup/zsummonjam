@@ -3,6 +3,7 @@ namespace zum
 {
     public static class ZumAutomatonAscendState
     {
+        public static float CLOUD = 9.0f;
         public static void Bind(ZapoState basicState)
         {
             basicState.CanEnter = CanEnter;
@@ -18,8 +19,14 @@ namespace zum
         {
             ZumAutomaton za = (ZumAutomaton)owner;
             Vector3 center = za.transform.position;
+            Vector3 forward = za.transform.forward;
+            float forwardAmount = 8.0f;
 
-            za.SetDesiredPosition(new Vector3(center.x, 11.0f, center.z));
+            za.SetDesiredPosition(new Vector3(
+                center.x + forward.x * forwardAmount,
+                CLOUD + 1.0f,
+                center.z + forward.z * forwardAmount
+            ));
             za.ScanTargetTimer.Stop();
         }
 
@@ -32,7 +39,7 @@ namespace zum
 
             za.MoveTowardTarget(4.0f, false);
 
-            float desiredSizeFactor = Mathf.Max(0.05f, 1.0f - Mathf.Abs(10.0f - za.transform.position.y) / 9.0f);
+            float desiredSizeFactor = Mathf.Max(0.05f, 1.0f - Mathf.Abs(7.0f - za.transform.position.y) / 9.0f);
             float maxSize = 0.6f;
             za.transform.localScale = desiredSizeFactor * maxSize * Vector3.one;
 
