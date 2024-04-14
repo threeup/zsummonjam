@@ -15,6 +15,7 @@ namespace zum
     [RequireComponent(typeof(Rigidbody))]
     public class ZumMineral : MonoBehaviour
     {
+        public bool HasOrigin() { return _originPos != Vector3.zero; }
         private Vector3 _originPos = Vector3.zero;
         private Vector3 _originRot = Vector3.zero;
         private Vector3 _targetPos = Vector3.zero;
@@ -39,7 +40,7 @@ namespace zum
                 {MineralStateType.RETURNING, MineralStateType.READY}
             };
             MineralMachine.WithdrawMap = new Dictionary<MineralStateType, MineralStateType>{
-                {MineralStateType.ATTRACTING, MineralStateType.READY},
+                {MineralStateType.ATTRACTING, MineralStateType.RETURNING},
                 {MineralStateType.GRABBED, MineralStateType.RETURNING}
             };
 
@@ -62,21 +63,21 @@ namespace zum
             transform.position = _originPos;
             transform.forward = _originRot;
         }
-        public float DistanceToPawnSq()
+        public float DistanceToPawnHandSq()
         {
-            if (_pawn != null)
+            if (_pawn == null)
             {
-                return Vector3.SqrMagnitude(transform.position - _pawn.transform.position);
+                return 99999f;
             }
-            return 9999f;
-
+            return Vector3.SqrMagnitude(transform.position - _pawn.GetMineralTargetPos(this));
         }
+
         public float DistanceToOriginSq()
         {
             return Vector3.SqrMagnitude(transform.position - _originPos);
         }
 
-        public float DotProductToPawnGrab()
+        public float DotProductToPawnHand()
         {
             if (_pawn == null)
             {
@@ -86,25 +87,35 @@ namespace zum
             {
                 return -1.0f;
             }
-            return ZapoMath.DotProduct(gameObject, _pawn.GrabHandTransform, _pawn.RealForward());
+            return ZapoMath.DotProduct(gameObject, _pawn.GetMineralTargetPos(this), _pawn.RealForward());
         }
 
 
-        public void AttractedBy(ZumPawn pawn)
+        public void AssociateTo(ZumPawn pawn)
         {
             _pawn = pawn;
         }
 
+        public void RequestPawnGrab()
+        {
+            if (_pawn != null)
+            {
+                _pawn.GrabMineral(this);
+            }
+        }
         public void RequestPawnDisconnect()
         {
-            _pawn.RemAttractedMineral(this);
+            if (_pawn != null)
+            {
+                _pawn.RemAttractedMineral(this);
+            }
         }
 
         public void SetDesiredPositionAsPawn()
         {
             if (_pawn != null)
             {
-                SetDesiredPosition(_pawn.transform.position);
+                SetDesiredPosition(_pawn.GetMineralTargetPos(this));
             }
 
         }

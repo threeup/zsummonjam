@@ -18,6 +18,10 @@ namespace zum
         public static void OnEnter(object owner)
         {
             ZumMineral mineral = (ZumMineral)owner;
+            if (!mineral.HasOrigin())
+            {
+                mineral.RegisterOrigin();
+            }
             mineral.GoKinematic(true);
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using zapo;
 
@@ -8,7 +9,18 @@ namespace zum
 {
     public class ZumPawn : ZapoPawn
     {
-        public List<ZumMineral> Minerals = new();
+        [SerializeField]
+        private List<ZumMineral> AttractedMinerals = new();
+        public int MaxAttractCount = 8;
+
+        [SerializeField]
+        private List<ZumMineral> GrabbedMinerals = new();
+        public int MaxGrabCount = 2;
+
+        [SerializeField]
+        private List<ZumMineral> PrimedMinerals = new();
+        public int MaxPrimedCount = 4;
+
 
         [SerializeField]
         private ZapoTimer AttractTimer;
@@ -361,17 +373,67 @@ namespace zum
             }
         }
 
-        public void AddAttractedMineral(ZumMineral min)
+        public void AttractMineral(ZumMineral min)
         {
+            while (AttractedMinerals.Count > 0 && AttractedMinerals.Count > MaxAttractCount - 1)
+            {
+                var purged = AttractedMinerals[0];
+                AttractedMinerals.RemoveAt(0);
+                purged.AssociateTo(null);
+            }
+            min.AssociateTo(this);
+            AttractedMinerals.Add(min);
+        }
 
-            min.AttractedBy(this);
-            Minerals.Add(min);
+        public void GrabMineral(ZumMineral min)
+        {
+            while (GrabbedMinerals.Count > 0 && GrabbedMinerals.Count > MaxGrabCount - 1)
+            {
+                var purged = GrabbedMinerals[0];
+                GrabbedMinerals.RemoveAt(0);
+                purged.AssociateTo(null);
+            }
+            AttractedMinerals.Remove(min);
+            GrabbedMinerals.Add(min);
+        }
+
+        public void AddPrimedMinerals()
+        {
+            if (GrabbedMinerals.Count == 0)
+            {
+                return;
+            }
+            while (PrimedMinerals.Count > 0 && PrimedMinerals.Count + GrabbedMinerals.Count > MaxPrimedCount)
+            {
+                var purged = PrimedMinerals[0];
+                PrimedMinerals.RemoveAt(0);
+                purged.AssociateTo(null);
+            }
+            PrimedMinerals.AddRange(GrabbedMinerals);
+            GrabbedMinerals.Clear();
         }
 
         public void RemAttractedMineral(ZumMineral min)
         {
-            min.AttractedBy(null);
-            Minerals.Remove(min);
+            min.AssociateTo(null);
+            AttractedMinerals.Remove(min);
+        }
+
+        public Vector3 GetMineralTargetPos(ZumMineral min)
+        {
+            if (AttractedMinerals.Contains(min))
+            {
+                return GrabHandTransform.position;
+            }
+            if (GrabbedMinerals.Contains(min))
+            {
+                return GrabHandTransform.position;
+            }
+            if (PrimedMinerals.Contains(min))
+            {
+                return ThrowHandTransform.position;
+            }
+            return Vector3.zero;
         }
 
         public void MakeMinion()
@@ -399,6 +461,10 @@ namespace zum
             base.Update();
             PointingCheck();
             Move();
+            if (IsThrowing)
+            {
+                AddPrimedMinerals();
+            }
 
             if (IsPointing && AttractTimer.TimerTick(Time.deltaTime))
             {
@@ -411,10 +477,10 @@ namespace zum
                     {
                         continue;
                     }
-                    float dotp = ZapoMath.DotProduct(go, GrabHandTransform, RealForward());
+                    float dotp = ZapoMath.DotProduct(go, center, RealForward());
                     if (dotp > 0.5f)
                     {
-                        AddAttractedMineral(zm);
+                        AttractMineral(zm);
                     }
                 }
 

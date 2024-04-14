@@ -13,10 +13,12 @@ namespace zum
         public static bool CanEnter(object owner)
         {
             ZumMineral mineral = (ZumMineral)owner;
-            return mineral.HasPawn() && mineral.DistanceToPawnSq() < 0.25f;
+            return mineral.HasPawn() && mineral.DistanceToPawnHandSq() < 0.25f;
         }
         public static void OnEnter(object owner)
         {
+            ZumMineral mineral = (ZumMineral)owner;
+            mineral.RequestPawnGrab();
         }
 
         public static void OnExit(object owner)
@@ -26,7 +28,7 @@ namespace zum
         {
             ZumMineral mineral = (ZumMineral)owner;
             mineral.SetDesiredPositionAsPawn();
-            if (mineral.DistanceToPawnSq() > 0.1f)
+            if (mineral.DistanceToPawnHandSq() > 0.1f)
             {
                 mineral.AdjustVelocityToTarget(mineral.AttachedSpeed);
             }

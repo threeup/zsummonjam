@@ -28,20 +28,24 @@ namespace zum
         {
             ZumMineral mineral = (ZumMineral)owner;
             mineral.SetDesiredPositionAsPawn();
-            float dotp = mineral.DotProductToPawnGrab();
-            if (dotp < 0.5f)
+            // dist is huge if pawn not grabbing
+            float dist = mineral.DistanceToPawnHandSq();
+            // dotp is negative if pawn not grabbing
+            float dotp = mineral.DotProductToPawnHand();
+            if (dotp < 0.5f && dist > 1.0f)
             {
                 mineral.RequestPawnDisconnect();
             }
-            mineral.AdjustVelocityToTarget(mineral.MaxAttractingSpeed * dotp);
-            if (!mineral.HasPawn())
+            if (mineral.HasPawn())
             {
-                mineral.MineralMachine.Withdraw();
+                mineral.AdjustVelocityToTarget(mineral.MaxAttractingSpeed * dotp);
+                // try to be grabbed
+                mineral.MineralMachine.Advance();
             }
             else
             {
-                // try to be grabbed
-                mineral.MineralMachine.Advance();
+                // no pawn
+                mineral.MineralMachine.Withdraw();
             }
         }
     }

@@ -10,9 +10,9 @@ public static class ZapoMath
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
 
-    public static float DotProduct(GameObject go, Transform otherTransform, Vector3 otherDir)
+    public static float DotProduct(GameObject go, Vector3 otherPos, Vector3 otherDir)
     {
-        Vector3 diff = Vector3.Normalize(go.transform.position - otherTransform.position);
+        Vector3 diff = Vector3.Normalize(go.transform.position - otherPos);
         return Vector3.Dot(diff, otherDir);
     }
 
