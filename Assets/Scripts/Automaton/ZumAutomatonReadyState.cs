@@ -4,8 +4,7 @@ namespace zum
 {
     public static class ZumAutomatonReadyState
     {
-        public static float CLOUD = 9.0f;
-        public static float WALL = 20.0f;
+
         public static void Bind(ZapoState basicState)
         {
             basicState.CanEnter = CanEnter;
@@ -16,13 +15,13 @@ namespace zum
         public static bool CanEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            return za.transform.position.y > CLOUD;
+            return za.transform.position.y > ZumConstants.CLOUD;
         }
         public static void OnEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
             za.ScanTargetTimer.Launch();
-            MoveToSearchPosition(za);
+            MoveToForwardPosition(za);
         }
 
         public static void OnExit(object owner)
@@ -31,7 +30,8 @@ namespace zum
         public static void Update(float dt, object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            if (Math.Abs(za.transform.position.x) > WALL || Math.Abs(za.transform.position.z) > WALL)
+            if (Math.Abs(za.transform.position.x) > ZumConstants.WALL ||
+                Math.Abs(za.transform.position.z) > ZumConstants.WALL)
             {
                 ClampToWall(za);
                 MoveToSearchPosition(za);
@@ -41,23 +41,29 @@ namespace zum
             {
                 za.AutomatonMachine.SetState(AutomatonStateType.TARGETING_OTHER);
             }
-            else if (za.CanTargetBase())
+            else if (za.CanTargetDoodad())
             {
-                za.AutomatonMachine.SetState(AutomatonStateType.RAIDING_BASE);
+                za.AutomatonMachine.SetState(AutomatonStateType.RAIDING_DOODAD);
             }
         }
 
         private static void ClampToWall(ZumAutomaton za)
         {
-            float x = Math.Clamp(za.transform.position.x, -0.999f * WALL, 0.999f * WALL);
-            float z = Math.Clamp(za.transform.position.z, -0.999f * WALL, 0.999f * WALL);
+            float nearWall = 0.999f * ZumConstants.WALL;
+            float x = Math.Clamp(za.transform.position.x, -nearWall, nearWall);
+            float z = Math.Clamp(za.transform.position.z, -nearWall, nearWall);
             za.transform.position = new Vector3(x, za.transform.position.y, z);
         }
 
+        private static void MoveToForwardPosition(ZumAutomaton za)
+        {
+            Vector3 dir = za.transform.forward;
+            za.SetDesiredPosition(new Vector3(dir.x * 20.0f, ZumConstants.CLOUD, dir.z * 20.0f));
+        }
         private static void MoveToSearchPosition(ZumAutomaton za)
         {
             Vector2 dir = UnityEngine.Random.insideUnitCircle;
-            za.SetDesiredPosition(new Vector3(dir.x * 20.0f, CLOUD, dir.y * 20.0f));
+            za.SetDesiredPosition(new Vector3(dir.x * 20.0f, ZumConstants.CLOUD, dir.y * 20.0f));
         }
     }
 }

@@ -31,9 +31,11 @@ namespace zum
         private ZumPawn _pawn;
 
         private Rigidbody _rb;
+        private ZumMaterial _zm;
         public void Awake()
         {
             _rb = GetComponent<Rigidbody>();
+            _zm = GetComponent<ZumMaterial>();
             MineralMachine.AdvanceMap = new Dictionary<MineralStateType, MineralStateType>{
                 {MineralStateType.NACENT, MineralStateType.READY},
                 {MineralStateType.ATTRACTING, MineralStateType.GRABBED},
@@ -62,6 +64,11 @@ namespace zum
         {
             transform.position = _originPos;
             transform.forward = _originRot;
+        }
+
+        public Color GetTargetColor()
+        {
+            return _zm.GetTargetColorAsRGB();
         }
         public float DistanceToPawnHandSq()
         {

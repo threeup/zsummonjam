@@ -151,7 +151,7 @@ namespace zum
         {
             for (int i = Minerals.Count - 1; i >= 0; ++i)
             {
-                Destroy(Minerals[i]);
+                Destroy(Minerals[i].gameObject);
             }
         }
 
@@ -177,7 +177,12 @@ namespace zum
 
         public void MakeDoodads()
         {
-            Vector3[] startPos = { new Vector3(-18, 4, -10), new Vector3(0, 4, 17), new Vector3(18, 4, -10) };
+            float startH = 5.15f;
+            Vector3[] startPos = {
+                new(-18, startH, -10),
+                new(0, startH, 17),
+                new(18, startH, -10)
+            };
             for (int i = 0; i < 3; ++i)
             {
                 GameObject go = ZumFactory.Instance.CreateDoodad(startPos[i], i);
@@ -230,7 +235,7 @@ namespace zum
                 {
                     var dead = zc.PossessedPawn;
                     zc.Dispossess();
-                    Destroy(dead);
+                    Destroy(dead.gameObject);
                 }
             }
         }

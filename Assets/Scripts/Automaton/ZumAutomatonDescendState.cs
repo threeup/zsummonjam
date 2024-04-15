@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace zum
 {
-    public static class ZumAutomatonAscendState
+    public static class ZumAutomatonDescendState
     {
         public static void Bind(ZapoState basicState)
         {
@@ -23,9 +23,11 @@ namespace zum
 
             za.SetDesiredPosition(new Vector3(
                 center.x + forward.x * forwardAmount,
-                ZumConstants.CLOUD + 0.5f,
+                ZumConstants.CLOUD - 3.5f,
                 center.z + forward.z * forwardAmount
             ));
+            za.ClearDoodadTarget();
+            za.ClearOtherTarget();
             za.ScanTargetTimer.Stop();
         }
 
@@ -42,7 +44,11 @@ namespace zum
             float maxSize = 0.6f;
             za.transform.localScale = desiredSizeFactor * maxSize * Vector3.one;
 
-            za.AutomatonMachine.Advance();
+            if (za.transform.position.y < ZumConstants.CLOUD - 3.0f)
+            {
+                // low enough
+                za.AutomatonMachine.Advance();
+            }
         }
     }
 }

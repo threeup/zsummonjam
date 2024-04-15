@@ -88,7 +88,7 @@ namespace zum
         }
 
         public GameObject CreateAutomaton(string name, Vector3 startPos, Quaternion startRot,
-            float wingPower, float torsoPower, float firePower)
+            float atkVsRed, float atkVsGreen, float atkVsBlue)
         {
             if (automatonProto == null)
             {
@@ -96,10 +96,19 @@ namespace zum
             }
             GameObject go = Instantiate(automatonProto, startPos, startRot);
             go.name = name;
-            var zc = go.GetComponent<ZumCombatant>();
-            if (zc != null)
+
+            // square to decrease power, 0.9 => 0.81, 0.5 => 0.25
+            float r = atkVsRed * atkVsRed;
+            float g = atkVsGreen * atkVsGreen;
+            float b = atkVsBlue * atkVsBlue;
+            if (go.TryGetComponent<ZumCombatant>(out var zc))
             {
-                zc.SetCombatStats(wingPower, torsoPower, firePower);
+                zc.SetCombatStats(r, g, b);
+            }
+            ZumMaterial zm = go.GetComponentInChildren<ZumMaterial>();
+            if (zm != null)
+            {
+                zm.SetTargetColor(r, g, b);
             }
             return go;
         }

@@ -28,8 +28,8 @@ namespace zum
             if (Randomize)
             {
                 Hue = Random.Range(0.0f, 1.0f);
-                Sat = Random.Range(0.7f, 1.0f);
-                Lightness = Random.Range(0.7f, 1.0f);
+                Sat = Random.Range(0.4f, 1.0f);
+                Lightness = Random.Range(0.4f, 1.0f);
                 _targetColor = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
                 DirectApplyColor(_targetColor);
             }
@@ -65,7 +65,9 @@ namespace zum
         private void BrightenApplyColor(Color inColor)
         {
             Color.RGBToHSV(inColor, out float hue, out float sat, out float v);
-            _adjustedColor = Color.HSVToRGB(hue, Mathf.Clamp(sat, 0.5f, 1.0f), Mathf.Clamp(v, 0.5f, 1.0f));
+            // bright?
+            //_adjustedColor = Color.HSVToRGB(hue, Mathf.Clamp(sat, 0.5f, 1.0f), Mathf.Clamp(v, 0.5f, 1.0f));
+            _adjustedColor = Color.HSVToRGB(hue, sat, v);
             _renderer.material.color = _adjustedColor;
         }
 

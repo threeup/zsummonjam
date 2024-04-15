@@ -10,13 +10,18 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 4777b6e77ad186749830ee59040bdb06,
         type: 3}
+      propertyPath: m_LocalScale.z
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 4777b6e77ad186749830ee59040bdb06,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: -17.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4777b6e77ad186749830ee59040bdb06,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4777b6e77ad186749830ee59040bdb06,
         type: 3}
@@ -153,6 +158,8 @@ MonoBehaviour:
   Hue: 0
   Sat: 1
   Lightness: 0.7
+  _targetColor: {r: 0, g: 0, b: 0, a: 0}
+  _adjustedColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!65 &6986421974580245942
 BoxCollider:
   m_ObjectHideFlags: 0

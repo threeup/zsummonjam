@@ -7,9 +7,10 @@ namespace zum
     {
         NACENT,
         ASCEND,
+        DESCEND,
         READY,
         TARGETING_OTHER,
-        RAIDING_BASE,
+        RAIDING_DOODAD,
     }
 
     [RequireComponent(typeof(Rigidbody))]
@@ -19,49 +20,55 @@ namespace zum
         public ZapoStateMach<AutomatonStateType> AutomatonMachine = new ZapoStateMach<AutomatonStateType>();
 
         public ZapoTimer ScanTargetTimer;
+        private ZapoTimer CollisionTimer;
         public float ScanRange = 40.0f;
 
+        private ZumCombatant _zc;
         private Rigidbody _rb;
         private Vector3 _targetPos;
 
-        private Transform _baseTarget;
-        private Transform _knownBase;
+        private Transform _doodadTarget;
+        private Transform _knownDoodad;
         private Transform _otherTarget;
         private Transform _knownOther;
 
         public bool CanTargetOther() { return _knownOther != null; }
         public bool HasOtherTarget() { return _otherTarget != null; }
-        public bool CanTargetBase() { return _knownBase != null; }
-        public bool HasBaseTarget() { return _baseTarget != null; }
+        public bool CanTargetDoodad() { return _knownDoodad != null; }
+        public bool HasDoodadTarget() { return _doodadTarget != null; }
 
         public void Awake()
         {
+            CollisionTimer = new ZapoTimer(0.5f, false, false);
             ScanTargetTimer = new ZapoTimer(2.0f, true, false);
+            _zc = GetComponent<ZumCombatant>();
             _rb = GetComponent<Rigidbody>();
             AutomatonMachine.AdvanceMap = new Dictionary<AutomatonStateType, AutomatonStateType>{
                 {AutomatonStateType.NACENT, AutomatonStateType.ASCEND},
+                {AutomatonStateType.DESCEND, AutomatonStateType.ASCEND},
                 {AutomatonStateType.ASCEND, AutomatonStateType.READY},
             };
             AutomatonMachine.WithdrawMap = new Dictionary<AutomatonStateType, AutomatonStateType>{
                 {AutomatonStateType.TARGETING_OTHER, AutomatonStateType.READY},
-                {AutomatonStateType.RAIDING_BASE, AutomatonStateType.READY}
+                {AutomatonStateType.RAIDING_DOODAD, AutomatonStateType.READY}
             };
 
             AutomatonMachine.Initialize(this);
             ZumAutomatonNacentState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.NACENT));
             ZumAutomatonAscendState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.ASCEND));
+            ZumAutomatonDescendState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.DESCEND));
             ZumAutomatonReadyState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.READY));
-            ZumAutomatonRaidingBaseState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.RAIDING_BASE));
+            ZumAutomatonRaidingDoodadState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.RAIDING_DOODAD));
             ZumAutomatonTargetingOtherState.Bind(AutomatonMachine.GetStateByType(AutomatonStateType.TARGETING_OTHER));
         }
 
-        public void SetBaseTarget()
+        public void SetDoodadTarget()
         {
-            _baseTarget = _knownBase;
+            _doodadTarget = _knownDoodad;
         }
-        public void ClearBaseTarget()
+        public void ClearDoodadTarget()
         {
-            _baseTarget = null;
+            _doodadTarget = null;
         }
         public void SetOtherTarget()
         {
@@ -80,9 +87,10 @@ namespace zum
 
         public void MoveTowardTarget(float speed, bool lookTowardMove)
         {
-            if (_baseTarget)
+            if (_doodadTarget)
             {
-                SetDesiredPosition(_baseTarget.position);
+                Vector3 pos = new Vector3(_doodadTarget.position.x, ZumConstants.CLOUD, _doodadTarget.position.z);
+                SetDesiredPosition(pos);
             }
             else if (_otherTarget)
             {
@@ -105,33 +113,79 @@ namespace zum
         public void Update()
         {
             AutomatonMachine.MachineUpdate(Time.deltaTime);
+            UpdateScan();
+            UpdateCombatReaction();
+        }
+
+        public void UpdateCombatReaction()
+        {
+            if (CollisionTimer.IsCountingDown)
+            {
+                if (CollisionTimer.TimerTick(Time.deltaTime))
+                {
+                    _zc.LastPainLocation = null;
+                }
+            }
+            else if (_zc.LastPainLocation is Vector3 loc)
+            {
+                transform.forward = (transform.position - loc).normalized;
+                CollisionTimer.Launch();
+                AutomatonMachine.SetState(AutomatonStateType.DESCEND);
+
+            }
+
+            if (!_zc.IsAlive())
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        private void UpdateScan()
+        {
             if (ScanTargetTimer.TimerTick(Time.deltaTime))
             {
                 Vector3 center = transform.position;
                 GameObject[] gos = ZumFactory.Instance.GetSphereOverlapsAutomaton(center, ScanRange);
                 float bestDotp = 0.0f;
-                Transform bestT = null;
+                GameObject best = null;
                 foreach (GameObject go in gos)
                 {
                     if (go.transform == transform)
                     {
                         continue;
                     }
-                    if (go.transform == _otherTarget)
-                    {
-                        bestT = go.transform;
-                        bestDotp = 2.0f;
-                        break;
-                    }
+                    // if (go.transform == _otherTarget || go.transform == _doodadTarget)
+                    // {
+                    //     best = go;
+                    //     bestDotp = 2.0f;
+                    //     break;
+                    // }
                     Vector3 diff = Vector3.Normalize(go.transform.position - center);
                     float dotp = ZapoMath.DotProduct(go, center, transform.forward);
                     if (dotp > bestDotp)
                     {
                         bestDotp = dotp;
-                        bestT = go.transform;
+                        best = go;
                     }
                 }
-                _knownOther = bestT;
+                bool isKnownDoodad = best != null && best.GetComponent<ZumDoodad>() != null;
+                bool isKnownAutomaton = best != null && best.GetComponent<ZumAutomaton>() != null;
+                if (isKnownDoodad)
+                {
+                    _knownDoodad = best.transform;
+                }
+                else
+                {
+                    _knownDoodad = null;
+                }
+                if (isKnownAutomaton)
+                {
+                    _knownOther = best.transform;
+                }
+                else
+                {
+                    _knownOther = null;
+                }
                 SetOtherTarget();
             }
         }

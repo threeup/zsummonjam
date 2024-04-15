@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace zum
 {
-    public static class ZumAutomatonRaidingBaseState
+    public static class ZumAutomatonRaidingDoodadState
     {
         public static void Bind(ZapoState basicState)
         {
@@ -13,22 +13,24 @@ namespace zum
         public static bool CanEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            return za.CanTargetBase();
+            return za.CanTargetDoodad();
         }
         public static void OnEnter(object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            za.SetBaseTarget();
+            za.SetDoodadTarget();
         }
 
         public static void OnExit(object owner)
         {
+            ZumAutomaton za = (ZumAutomaton)owner;
+            za.ClearDoodadTarget();
         }
         public static void Update(float dt, object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
             za.MoveTowardTarget(0.25f, true);
-            if (!za.HasBaseTarget())
+            if (!za.HasDoodadTarget())
             {
                 za.AutomatonMachine.Withdraw();
             }

@@ -38,6 +38,15 @@ namespace zum
             {
                 boss.BossMachine.SetState(BossStateType.GAMEOVER);
             }
+            if (boss.Doodads.Count <= 1 && boss.TimeInState() > 5.0f)
+            {
+                if (boss.Doodads.Count == 0)
+                {
+                    Debug.Log("Winner ! =");
+                    Debug.Log(boss.Doodads[0].name);
+                }
+                boss.BossMachine.SetState(BossStateType.GAMEOVER);
+            }
         }
     }
 }

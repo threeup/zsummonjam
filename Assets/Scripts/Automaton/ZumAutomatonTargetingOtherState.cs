@@ -23,6 +23,8 @@ namespace zum
 
         public static void OnExit(object owner)
         {
+            ZumAutomaton za = (ZumAutomaton)owner;
+            za.ClearOtherTarget();
         }
         public static void Update(float dt, object owner)
         {

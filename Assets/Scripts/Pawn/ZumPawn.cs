@@ -448,8 +448,10 @@ namespace zum
                 GrabbedMinerals.RemoveAt(0);
                 purged.AssociateTo(null);
             }
-            AttractedMinerals.Remove(min);
+
             GrabbedMinerals.Add(min);
+            AttractedMinerals.Remove(min);
+            ZumHUD.Instance.LeftHandRefresh(ref GrabbedMinerals);
         }
 
         public void AddPrimedMinerals()
@@ -464,8 +466,11 @@ namespace zum
                 PrimedMinerals.RemoveAt(0);
                 purged.AssociateTo(null);
             }
+            GrabbedMinerals.ForEach(min => ZumHUD.Instance.RightHandGrab(min));
             PrimedMinerals.AddRange(GrabbedMinerals);
             GrabbedMinerals.Clear();
+            ZumHUD.Instance.LeftHandRefresh(ref GrabbedMinerals);
+            ZumHUD.Instance.RightHandRefresh(ref PrimedMinerals);
         }
 
         public void RemAttractedMineral(ZumMineral min)
@@ -493,8 +498,11 @@ namespace zum
 
         public void LaunchAutomatons()
         {
-
-            List<Color> colors = new List<Color> { Color.black };
+            if (PrimedMinerals.Count == 0)
+            {
+                return;
+            }
+            List<Color> colors = new() { Color.black };
             foreach (var pm in PrimedMinerals)
             {
                 var zm = pm.GetComponentInChildren<ZumMaterial>();
@@ -505,22 +513,24 @@ namespace zum
             }
 
 
-            float wingPower = 0.0f;
-            float torsoPower = 0.0f;
-            float firePower = 0.0f;
+            float atkVsRed = 0.0f;
+            float atkVsGreen = 0.0f;
+            float atkVsBlue = 0.0f;
             foreach (Color c in colors)
             {
-                wingPower = Math.Max(wingPower, c.b);
-                torsoPower = Math.Max(torsoPower, c.g);
-                firePower = Math.Max(firePower, c.r);
+                atkVsRed = Math.Max(atkVsRed, c.r);
+                atkVsGreen = Math.Max(atkVsGreen, c.g);
+                atkVsBlue = Math.Max(atkVsBlue, c.b);
             }
             string name = "Dragon-" + this.name;
-            ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position, transform.rotation, wingPower, torsoPower, firePower);
+            ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position,
+                transform.rotation, atkVsRed, atkVsGreen, atkVsBlue);
 
             while (PrimedMinerals.Count > 0)
             {
                 var purged = PrimedMinerals[0];
                 PrimedMinerals.RemoveAt(0);
+                ZumHUD.Instance.RightHandConsume(purged);
                 Destroy(purged.gameObject);
             }
         }
