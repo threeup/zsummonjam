@@ -28,8 +28,8 @@ namespace zum
             if (Randomize)
             {
                 Hue = Random.Range(0.0f, 1.0f);
-                Sat = Random.Range(0.4f, 1.0f);
-                Lightness = Random.Range(0.4f, 1.0f);
+                Sat = Random.Range(0.2f, 1.0f);
+                Lightness = Random.Range(0.2f, 1.0f);
                 _targetColor = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
                 DirectApplyColor(_targetColor);
             }

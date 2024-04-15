@@ -138,9 +138,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbaaab7bda707944e891181fa01fe6c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WingPower: 0
-  TorsoPower: 0
-  FirePower: 0
+  AtkVsRed: 0
+  AtkVsGreen: 0
+  AtkVsBlue: 0
   HP: 0
 --- !u!114 &3478891941660492123
 MonoBehaviour:
@@ -179,8 +179,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.12, y: 0.015, z: 0.1}
-  m_Center: {x: 0.0022, y: 0.003, z: 0.015}
+  m_Size: {x: 0.03, y: 0.02, z: 0.1}
+  m_Center: {x: 0, y: 0, z: 0.015}
 --- !u!54 &-8158985668942734558
 Rigidbody:
   m_ObjectHideFlags: 0
