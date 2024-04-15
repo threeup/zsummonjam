@@ -12,6 +12,7 @@ namespace zum
         public GameObject humanCtrlrProto;
         public GameObject pawnProto;
         public GameObject automatonProto;
+        public GameObject doodadProto;
 
         public List<GameObject> mineralsProto;
 
@@ -69,6 +70,18 @@ namespace zum
             int k = Random.Range(0, mineralsProto.Count);
             GameObject go = Instantiate(mineralsProto[k], pos, Quaternion.LookRotation(dir));
             go.name = "Mineral-" + pos.ToString();
+            return go;
+        }
+
+        public GameObject CreateDoodad(Vector3 pos, int idx)
+        {
+            if (doodadProto == null)
+            {
+                return null;
+            }
+            Vector3 dir = -pos.normalized;
+            GameObject go = Instantiate(doodadProto, pos, Quaternion.LookRotation(dir));
+            go.name = "Doodad-" + idx;
             return go;
         }
 

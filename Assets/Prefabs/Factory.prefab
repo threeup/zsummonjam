@@ -53,6 +53,8 @@ MonoBehaviour:
     type: 3}
   automatonProto: {fileID: 3856634306734643917, guid: 7748d67ff08083b4c8302a980238285f,
     type: 3}
+  doodadProto: {fileID: 3301800285146377853, guid: 76475a4400158224583b89884158d4d6,
+    type: 3}
   mineralsProto:
   - {fileID: 426657359301192996, guid: 44828e252cce98246a32d7f5bce61e39, type: 3}
   - {fileID: 8961437614665805592, guid: 710f2b3b225478241b73871263fa8819, type: 3}
@@ -121,7 +123,7 @@ PrefabInstance:
         type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 9b5a825c0af8ecf4aa7a68ae21456671, type: 2}
+      objectReference: {fileID: 2100000, guid: ff188f58422043f489060e28a5e4e0c0, type: 2}
     - target: {fileID: 919132149155446097, guid: c1577d4efcf8c6c488b19c1659a2e615,
         type: 3}
       propertyPath: m_Name

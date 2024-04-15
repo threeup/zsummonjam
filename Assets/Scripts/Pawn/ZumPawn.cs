@@ -83,6 +83,8 @@ namespace zum
         private ZumController _zumCtrlr;
         private GameObject _mainCamera;
 
+        private ZumMaterial _zm;
+
         private const float _threshold = 0.01f;
 
         private bool _hasAnimator;
@@ -92,8 +94,10 @@ namespace zum
         public Transform ThrowHandTransform;
 
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            _zm = GetComponentInChildren<ZumMaterial>();
             AttractTimer = new ZapoTimer(0.5f, true, true);
             // get a reference to our main camera
             if (_mainCamera == null)
@@ -121,6 +125,41 @@ namespace zum
                 _zumCtrlr = zc;
             }
             _hasZumCtrlr = _zumCtrlr != null;
+        }
+
+        public void ResetTeamAssociation()
+        {
+            if (_zm == null)
+            {
+                Debug.Log("no zm");
+                Debug.Log(gameObject.name);
+                return;
+            }
+            _zm.SetRed(0.1f);
+            _zm.SetBlue(0.1f);
+            _zm.SetGreen(0.1f);
+        }
+
+        public void SetTeamAssociation(ZumTeam team, float amount)
+        {
+            if (_zm == null)
+            {
+                Debug.Log("no zm");
+                Debug.Log(gameObject.name);
+                return;
+            }
+            switch (team)
+            {
+                default: break;
+                case ZumTeam.RED: _zm.SetRed(amount); break;
+                case ZumTeam.BLUE: _zm.SetBlue(amount); break;
+                case ZumTeam.GREEN: _zm.SetGreen(amount); break;
+            }
+        }
+
+        public void TeleportHome(ZumDoodad home)
+        {
+            this.transform.position = home.transform.position + home.transform.forward * 3.0f;
         }
 
         private void AssignAnimationIDs()
@@ -453,7 +492,7 @@ namespace zum
                 var zm = pm.GetComponentInChildren<ZumMaterial>();
                 if (zm != null)
                 {
-                    colors.Add(zm.GetColorAsRGB());
+                    colors.Add(zm.GetTargetColorAsRGB());
                 }
             }
 

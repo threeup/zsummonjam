@@ -20,6 +20,7 @@ namespace zum
         public List<ZumController> Controllers = new List<ZumController>();
         public int PendingPlayers = 0;
         public List<GameObject> Minerals = new List<GameObject>();
+        public List<ZumDoodad> Doodads = new List<ZumDoodad>();
         public ZapoStateMach<BossStateType> BossMachine = new ZapoStateMach<BossStateType>();
 
         public float TimeInState() { return BossMachine.timeInState; }
@@ -174,10 +175,40 @@ namespace zum
             }
         }
 
+        public void MakeDoodads()
+        {
+            Vector3[] startPos = { new Vector3(-18, 4, -10), new Vector3(0, 4, 17), new Vector3(18, 4, -10) };
+            for (int i = 0; i < 3; ++i)
+            {
+                GameObject go = ZumFactory.Instance.CreateDoodad(startPos[i], i);
+                Doodads.Add(go.GetComponent<ZumDoodad>());
+            }
+            ZapoHelpers.Shuffle(ref Doodads);
+            Doodads[0].AssignTeam(ZumTeam.RED);
+            Doodads[1].AssignTeam(ZumTeam.GREEN);
+            Doodads[2].AssignTeam(ZumTeam.BLUE);
+        }
+
         public void MakePawns()
         {
             List<ZumController> noPawns = Controllers.FindAll(zc => zc.PossessedPawn == null);
             noPawns.ForEach(zc => ZumFactory.Instance.CreatePawn(zc));
+        }
+
+        public void AssociatePawnsToTeams()
+        {
+            ZapoHelpers.Shuffle(ref Doodads);
+            for (int i = 0; i < Controllers.Count; ++i)
+            {
+                ZumPawn zp = Controllers[i].PossessedPawn as ZumPawn;
+                if (zp != null)
+                {
+                    ZumDoodad home = Doodads[i % 3];
+                    zp.ResetTeamAssociation();
+                    zp.SetTeamAssociation(home.Team, 0.5f);
+                    zp.TeleportHome(home);
+                }
+            }
         }
 
         public ZumPawn GetRandomPawn()

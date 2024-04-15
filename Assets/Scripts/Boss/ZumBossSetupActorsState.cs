@@ -20,6 +20,7 @@ namespace zum
             ZumBoss boss = (ZumBoss)owner;
             boss.MakeHumanPlayers();
             boss.MakeNPCPlayers();
+            boss.MakeDoodads();
         }
 
         public static void OnExit(object owner)
@@ -30,6 +31,7 @@ namespace zum
         {
             ZumBoss boss = (ZumBoss)owner;
             boss.MakePawns();
+            boss.AssociatePawnsToTeams();
             boss.BossMachine.Advance();
         }
     }

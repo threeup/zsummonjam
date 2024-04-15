@@ -13,31 +13,66 @@ namespace zum
         public float Sat;
         public float Lightness;
 
-        private Color _color;
+        [SerializeField]
+        private Color _targetColor;
 
-        public void Start()
+        [SerializeField]
+        private Color _adjustedColor;
+
+        public void Awake()
         {
             _renderer = GetComponent<Renderer>();
-
+        }
+        public void Start()
+        {
             if (Randomize)
             {
                 Hue = Random.Range(0.0f, 1.0f);
                 Sat = Random.Range(0.7f, 1.0f);
                 Lightness = Random.Range(0.7f, 1.0f);
+                _targetColor = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
+                DirectApplyColor(_targetColor);
             }
-
-            ApplyColor();
         }
 
-        public Color GetColorAsRGB()
+        public Color GetTargetColorAsRGB()
         {
-            return _color;
+            return _targetColor;
+        }
+        public void SetTargetColor(float r, float g, float b)
+        {
+            _targetColor.r = r;
+            _targetColor.g = g;
+            _targetColor.b = b;
+            BrightenApplyColor(_targetColor);
         }
 
-        private void ApplyColor()
+        public void SetRed(float val)
         {
-            _color = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
-            _renderer.material.color = _color;
+            _targetColor.r = val;
+            BrightenApplyColor(_targetColor);
+        }
+        public void SetBlue(float val)
+        {
+            _targetColor.b = val;
+            BrightenApplyColor(_targetColor);
+        }
+        public void SetGreen(float val)
+        {
+            _targetColor.g = val;
+            BrightenApplyColor(_targetColor);
+        }
+        private void BrightenApplyColor(Color inColor)
+        {
+            Color.RGBToHSV(inColor, out float hue, out float sat, out float v);
+            _adjustedColor = Color.HSVToRGB(hue, Mathf.Clamp(sat, 0.5f, 1.0f), Mathf.Clamp(v, 0.5f, 1.0f));
+            _renderer.material.color = _adjustedColor;
+        }
+
+        private void DirectApplyColor(Color inColor)
+        {
+            _adjustedColor = inColor;
+            _renderer.material.color = _adjustedColor;
         }
     }
 }

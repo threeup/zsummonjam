@@ -63,9 +63,14 @@ namespace zapo
         protected ZapoController _ctrlr;
         protected bool _hasCtrlr;
 
-        protected virtual void Start()
+
+        protected virtual void Awake()
         {
             _charcontroller = GetComponent<CharacterController>();
+        }
+
+        protected virtual void Start()
+        {
             // reset our timeouts on start
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;

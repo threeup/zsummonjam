@@ -10,9 +10,15 @@ namespace zum
         public float WingPower;
         public float TorsoPower;
         public float FirePower;
-        public void Start()
+        public int HP;
+        public bool HasCollision() { return _collider.enabled; }
+        public void Awake()
         {
             _collider = GetComponent<Collider>();
+        }
+        public void Start()
+        {
+            HP = 4;
         }
 
         public void SetCombatStats(float wingPower, float torsoPower, float firePower)
@@ -34,8 +40,13 @@ namespace zum
 
                 if (winCount < loseCount)
                 {
-                    Destroy(gameObject);
+                    HP -= 1;
+                    if (HP <= 0)
+                    {
+                        _collider.enabled = false;
+                    }
                 }
+                this.transform.forward = -this.transform.forward;
             }
         }
     }

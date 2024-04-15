@@ -354,7 +354,16 @@ MonoBehaviour:
   GroundLayers:
     serializedVersion: 2
     m_Bits: 1
-  Minerals: []
+  AttractedMinerals: []
+  MaxAttractCount: 8
+  GrabbedMinerals: []
+  MaxGrabCount: 2
+  PrimedMinerals: []
+  MaxPrimedCount: 4
+  AttractTimer:
+    <IsLooping>k__BackingField: 0
+    <IsCountingDown>k__BackingField: 0
+    _countdownTimer: 0
   LandingAudioClip: {fileID: 8300000, guid: ff697d3070687ce4583faa0561a145a2, type: 3}
   FootstepAudioClips:
   - {fileID: 8300000, guid: 72f526a6a9890f643a88e85a61c86c8a, type: 3}
@@ -579,6 +588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8730470615513814647}
   - component: {fileID: 7029982274164168455}
+  - component: {fileID: 7872512148089726800}
   m_Layer: 9
   m_Name: throwermesh
   m_TagString: Untagged
@@ -676,6 +686,24 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.000025598798, y: 0.00015450921, z: 0.0010378994}
     m_Extent: {x: 0.0044921753, y: 0.009938969, z: 0.004421279}
   m_DirtyAABB: 0
+--- !u!114 &7872512148089726800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4926175349523913580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56270d36cd867c4478f499f11d0f4f4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Randomize: 1
+  Hue: 0
+  Sat: 0
+  Lightness: 0
+  _targetColor: {r: 0, g: 0, b: 0, a: 0}
+  _adjustedColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &5143231882302558064
 GameObject:
   m_ObjectHideFlags: 0
