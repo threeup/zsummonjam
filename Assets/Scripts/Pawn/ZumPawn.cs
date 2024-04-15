@@ -159,7 +159,7 @@ namespace zum
 
         public void TeleportHome(ZumDoodad home)
         {
-            this.transform.position = home.transform.position + home.transform.forward * 3.0f;
+            WarpTo(home.transform.position + home.transform.up * 3.0f);
         }
 
         private void AssignAnimationIDs()
@@ -200,18 +200,26 @@ namespace zum
             }
             if (IsPointing) { PointingAmount += Time.deltaTime; } else { PointingAmount = 0; }
             if (IsThrowing) { ThrowingAmount += Time.deltaTime; }
-            else
+            int adjustedPointingAmount = (int)Mathf.Ceil(PointingAmount * 5f);
+            int adjustedThrowingAmount = (int)Mathf.Ceil(ThrowingAmount * 5f);
+
+            if (!IsThrowing && ThrowingAmount > 0.01f)
             {
-                if (ThrowingAmount > 2.0f)
+                if (adjustedThrowingAmount > 2)
                 {
                     LaunchAutomatons();
                 }
+                else
+                {
+                    //pump fake
+                }
                 ThrowingAmount = 0.0f;
+                // gives one extra fram for the animator
             }
             if (_hasAnimator)
             {
-                _animator.SetInteger(_animIDPointingAmount, (int)Mathf.Ceil(PointingAmount * 5f));
-                _animator.SetInteger(_animIDThrowingAmount, (int)Mathf.Ceil(ThrowingAmount * 5f));
+                _animator.SetInteger(_animIDPointingAmount, adjustedPointingAmount);
+                _animator.SetInteger(_animIDThrowingAmount, adjustedThrowingAmount);
             }
         }
 

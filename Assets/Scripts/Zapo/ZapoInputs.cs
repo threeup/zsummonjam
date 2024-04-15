@@ -30,7 +30,7 @@ namespace zapo
 
 		public void OnLook(InputValue value)
 		{
-			if(cursorInputForLook)
+			if (cursorInputForLook)
 			{
 				LookInput(value.Get<Vector2>());
 			}
@@ -38,7 +38,7 @@ namespace zapo
 
 		public void OnJump(InputValue value)
 		{
-			JumpInput(value.isPressed == true);			
+			JumpInput(value.isPressed == true);
 		}
 
 		public void OnSprint(InputValue value)
@@ -51,7 +51,7 @@ namespace zapo
 			ActionOneInput(value.isPressed == true);
 		}
 
-		
+
 		public void OnThrow(InputValue value)
 		{
 			ActionTwoInput(value.isPressed == true);
@@ -82,6 +82,7 @@ namespace zapo
 		public void ActionOneInput(bool newState)
 		{
 			actionOne = newState;
+			SetCursorState(cursorLocked);
 		}
 
 		public void ActionTwoInput(bool newState)

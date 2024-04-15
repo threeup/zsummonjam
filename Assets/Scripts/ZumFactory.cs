@@ -81,6 +81,8 @@ namespace zum
             }
             Vector3 dir = -pos.normalized;
             GameObject go = Instantiate(doodadProto, pos, Quaternion.LookRotation(dir));
+            //idk this up thing
+            go.transform.rotation = Quaternion.LookRotation(Vector3.up, go.transform.up);
             go.name = "Doodad-" + idx;
             return go;
         }

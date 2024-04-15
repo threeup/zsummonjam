@@ -110,6 +110,13 @@ namespace zapo
             return new Vector3(_charcontroller.velocity.x, 0.0f, _charcontroller.velocity.z).magnitude;
         }
 
+        public void WarpTo(Vector3 nextPosition)
+        {
+            _charcontroller.enabled = false;
+            transform.position = nextPosition;
+            _charcontroller.enabled = true;
+        }
+
         public void ApplyMove(Vector3 dir, float speed, float vertVel)
         {
             _charcontroller.Move(dir * _speed * Time.deltaTime + new Vector3(0.0f, vertVel, 0.0f) * Time.deltaTime);
