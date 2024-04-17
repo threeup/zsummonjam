@@ -45,7 +45,6 @@ namespace zum
                 {
                     // detonate on doodad
                     HP = 0;
-                    Debug.Log("detonate");
                     return;
                 }
                 int winCount = 0;
@@ -58,7 +57,6 @@ namespace zum
                 {
                     LastPainLocation = collision.body.transform.position;
                     HP -= 1;
-                    Debug.Log("ouch");
                 }
 
             }

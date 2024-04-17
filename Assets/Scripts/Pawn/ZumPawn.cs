@@ -533,8 +533,9 @@ namespace zum
         {
 
             string name = "Dragon-" + this.name;
-            ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position,
+            GameObject go = ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position,
                 transform.rotation, ThrowingAmount, LaunchColor.r, LaunchColor.g, LaunchColor.b);
+            ZumBoss.Instance.Automatons.Add(go);
 
             while (PrimedMinerals.Count > 0)
             {

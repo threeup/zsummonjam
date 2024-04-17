@@ -24,6 +24,7 @@ namespace zum
         {
             ZumBoss boss = (ZumBoss)owner;
             boss.DestroyNPCs();
+            boss.DestroyMinions();
 
         }
         public static void Update(float dt, object owner)

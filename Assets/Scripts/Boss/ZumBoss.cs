@@ -20,6 +20,7 @@ namespace zum
         public List<ZumController> Controllers = new List<ZumController>();
         public int PendingPlayers = 0;
         public List<GameObject> Minerals = new List<GameObject>();
+        public List<GameObject> Automatons = new List<GameObject>();
         public List<ZumDoodad> Doodads = new List<ZumDoodad>();
         public ZapoStateMach<BossStateType> BossMachine = new ZapoStateMach<BossStateType>();
 
@@ -247,6 +248,12 @@ namespace zum
         {
             List<ZumController> purged = Controllers.FindAll(zc => zc.IsNPC);
             purged.ForEach(zc => Destroy(zc.gameObject));
+        }
+
+        public void DestroyMinions()
+        {
+
+            Automatons.ForEach(zc => Destroy(zc.gameObject));
         }
 
         public void Update()
