@@ -36,7 +36,7 @@ namespace zum
         {
             ZumAutomaton za = (ZumAutomaton)owner;
 
-            za.MoveTowardTarget(4.0f, false);
+            za.MoveTowardTarget(3.0f + za.Speed, false);
 
             float desiredSizeFactor = Mathf.Max(0.05f, 1.0f - Mathf.Abs(7.0f - za.transform.position.y) / 9.0f);
             float maxSize = 0.6f;

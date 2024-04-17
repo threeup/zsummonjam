@@ -1,6 +1,8 @@
 using UnityEngine;
-#if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
+
+#if UNITY_EDITOR
+using UnityEditor;
 #endif
 
 namespace zapo
@@ -22,7 +24,6 @@ namespace zapo
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
-#if ENABLE_INPUT_SYSTEM
 		public void OnMove(InputValue value)
 		{
 			MoveInput(value.Get<Vector2>());
@@ -56,7 +57,21 @@ namespace zapo
 		{
 			ActionTwoInput(value.isPressed == true);
 		}
+
+		public void OnMenu(InputValue value)
+		{
+			if (value.isPressed)
+			{
+#if UNITY_EDITOR
+				if (EditorApplication.isPlaying)
+				{
+					EditorApplication.isPlaying = false;
+				}
+#else
+        Application.Quit();
 #endif
+			}
+		}
 
 
 		public void MoveInput(Vector2 newMoveDirection)

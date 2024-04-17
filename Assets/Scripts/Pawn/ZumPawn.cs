@@ -19,8 +19,10 @@ namespace zum
 
         [SerializeField]
         private List<ZumMineral> PrimedMinerals = new();
+        public bool HasPrime { get { return PrimedMinerals.Count > 0; } }
         public int MaxPrimedCount = 4;
 
+        public Color LaunchColor = Color.black;
 
         [SerializeField]
         private ZapoTimer AttractTimer;
@@ -40,6 +42,7 @@ namespace zum
         [Header("Player Throwing")]
         [Tooltip("If the character is throwing or not.")]
         public bool IsThrowing = false;
+        public bool WasThrowing = false;
         [Tooltip("Amount of Throwing Time")]
         public float ThrowingAmount = 0;
 
@@ -192,7 +195,7 @@ namespace zum
                 return;
             }
             IsPointing = _zumCtrlr.WantsPoint;
-            IsThrowing = _zumCtrlr.WantsThrow && _ctrlr.MoveVec.magnitude < 0.5;
+            IsThrowing = _zumCtrlr.WantsThrow;// && Math.Abs(_ctrlr.MoveVec.x) < 0.5;
             if (_hasAnimator)
             {
                 _animator.SetBool(_animIDPointing, IsPointing);
@@ -202,25 +205,25 @@ namespace zum
             if (IsThrowing) { ThrowingAmount += Time.deltaTime; }
             int adjustedPointingAmount = (int)Mathf.Ceil(PointingAmount * 5f);
             int adjustedThrowingAmount = (int)Mathf.Ceil(ThrowingAmount * 5f);
-
-            if (!IsThrowing && ThrowingAmount > 0.01f)
+            if (IsThrowing && !WasThrowing)
             {
-                if (adjustedThrowingAmount > 2)
+                PrimeGrabbedMinerals();
+                PrepAutomatonLaunch();
+            }
+            else if (!IsThrowing && WasThrowing)
+            {
+                if (PrimedMinerals.Count > 0 && adjustedThrowingAmount > 2)
                 {
-                    LaunchAutomatons();
-                }
-                else
-                {
-                    //pump fake
+                    DoAutomatonLaunch();
                 }
                 ThrowingAmount = 0.0f;
-                // gives one extra fram for the animator
             }
             if (_hasAnimator)
             {
                 _animator.SetInteger(_animIDPointingAmount, adjustedPointingAmount);
                 _animator.SetInteger(_animIDThrowingAmount, adjustedThrowingAmount);
             }
+            WasThrowing = IsThrowing;
         }
 
         private void CameraRotation()
@@ -454,7 +457,7 @@ namespace zum
             ZumHUD.Instance.LeftHandRefresh(ref GrabbedMinerals);
         }
 
-        public void AddPrimedMinerals()
+        public void PrimeGrabbedMinerals()
         {
             if (GrabbedMinerals.Count == 0)
             {
@@ -496,10 +499,11 @@ namespace zum
             return Vector3.zero;
         }
 
-        public void LaunchAutomatons()
+        public void PrepAutomatonLaunch()
         {
             if (PrimedMinerals.Count == 0)
             {
+                LaunchColor = Color.black;
                 return;
             }
             List<Color> colors = new() { Color.black };
@@ -522,9 +526,15 @@ namespace zum
                 atkVsGreen = Math.Max(atkVsGreen, c.g);
                 atkVsBlue = Math.Max(atkVsBlue, c.b);
             }
+            LaunchColor = new Color(atkVsRed, atkVsGreen, atkVsBlue);
+        }
+
+        public void DoAutomatonLaunch()
+        {
+
             string name = "Dragon-" + this.name;
             ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position,
-                transform.rotation, atkVsRed, atkVsGreen, atkVsBlue);
+                transform.rotation, ThrowingAmount, LaunchColor.r, LaunchColor.g, LaunchColor.b);
 
             while (PrimedMinerals.Count > 0)
             {
@@ -546,7 +556,7 @@ namespace zum
             Move();
             if (IsThrowing)
             {
-                AddPrimedMinerals();
+
             }
 
             if (IsPointing && AttractTimer.TimerTick(Time.deltaTime))

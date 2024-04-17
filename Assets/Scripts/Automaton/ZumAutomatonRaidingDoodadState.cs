@@ -29,7 +29,7 @@ namespace zum
         public static void Update(float dt, object owner)
         {
             ZumAutomaton za = (ZumAutomaton)owner;
-            za.MoveTowardTarget(0.25f, true);
+            za.MoveTowardTarget(0.8f * za.Speed, true);
             if (!za.HasDoodadTarget())
             {
                 za.AutomatonMachine.Withdraw();

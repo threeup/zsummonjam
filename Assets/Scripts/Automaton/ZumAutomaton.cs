@@ -23,6 +23,8 @@ namespace zum
         private ZapoTimer CollisionTimer;
         public float ScanRange = 40.0f;
 
+        public float Speed = 10.0f;
+
         private ZumCombatant _zc;
         private Rigidbody _rb;
         private Vector3 _targetPos;
@@ -83,6 +85,11 @@ namespace zum
         public void SetDesiredPosition(Vector3 pos)
         {
             _targetPos = pos;
+        }
+
+        public void SetSpeed(float speed)
+        {
+            Speed = speed;
         }
 
         public void MoveTowardTarget(float speed, bool lookTowardMove)

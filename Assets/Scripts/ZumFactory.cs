@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 using zapo;
 
@@ -13,6 +14,7 @@ namespace zum
         public GameObject pawnProto;
         public GameObject automatonProto;
         public GameObject doodadProto;
+        public GameObject cursorProto;
 
         public List<GameObject> mineralsProto;
 
@@ -37,6 +39,17 @@ namespace zum
             }
             GameObject go = Instantiate(humanCtrlrProto);
             go.name = "Human" + Time.timeSinceLevelLoad;
+            if (go.TryGetComponent<ZumPlayerController>(out var zpc))
+            {
+                GameObject cursor = Instantiate(cursorProto);
+                if (cursor.TryGetComponent<ZumThrowCursor>(out var tc))
+                {
+                    zpc.ThrowCursor = tc;
+                    tc.SetStrengthAndForward(-1, Vector3.right);
+                }
+            }
+
+
             return go;
         }
         public GameObject CreateNPC()
@@ -88,7 +101,7 @@ namespace zum
         }
 
         public GameObject CreateAutomaton(string name, Vector3 startPos, Quaternion startRot,
-            float atkVsRed, float atkVsGreen, float atkVsBlue)
+            float speed, float atkVsRed, float atkVsGreen, float atkVsBlue)
         {
             if (automatonProto == null)
             {
@@ -96,6 +109,20 @@ namespace zum
             }
             GameObject go = Instantiate(automatonProto, startPos, startRot);
             go.name = name;
+            if (go.TryGetComponent<ZumAutomaton>(out var za))
+            {
+                if (speed > 2.0f)
+                {
+                    // 5 becomes 0
+                    // 2 becomes -1
+                    float bonusLost = Mathf.Clamp((5.0f - speed) / 3.0f, 0.0f, 1.0f);
+                    za.SetSpeed(3.0f - bonusLost);
+                }
+                else
+                {
+                    za.SetSpeed(Mathf.Max(speed, 0.5f));
+                }
+            }
 
             // square to decrease power, 0.9 => 0.81, 0.5 => 0.25
             float r = atkVsRed * atkVsRed;

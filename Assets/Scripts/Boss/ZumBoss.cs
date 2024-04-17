@@ -149,10 +149,14 @@ namespace zum
 
         public void DestroyMinerals()
         {
-            for (int i = Minerals.Count - 1; i >= 0; ++i)
+            for (int i = Minerals.Count - 1; i >= 0; --i)
             {
-                Destroy(Minerals[i].gameObject);
+                if (Minerals[i] != null)
+                {
+                    Destroy(Minerals[i]);
+                }
             }
+            Minerals.Clear();
         }
 
 

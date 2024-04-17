@@ -8,6 +8,7 @@ namespace zum
     {
         private Renderer _renderer;
         public bool Randomize = true;
+        public bool ApplyColorOnStart = true;
 
         public float Hue;
         public float Sat;
@@ -17,7 +18,7 @@ namespace zum
         private Color _targetColor;
 
         [SerializeField]
-        private Color _adjustedColor;
+        private Color _computedColor;
 
         public void Awake()
         {
@@ -31,6 +32,9 @@ namespace zum
                 Sat = Random.Range(0.2f, 1.0f);
                 Lightness = Random.Range(0.2f, 1.0f);
                 _targetColor = ZapoColorHelper.HSLtoRGB(Hue, Sat, Lightness);
+            }
+            if (ApplyColorOnStart)
+            {
                 DirectApplyColor(_targetColor);
             }
         }
@@ -67,14 +71,14 @@ namespace zum
             Color.RGBToHSV(inColor, out float hue, out float sat, out float v);
             // bright?
             //_adjustedColor = Color.HSVToRGB(hue, Mathf.Clamp(sat, 0.5f, 1.0f), Mathf.Clamp(v, 0.5f, 1.0f));
-            _adjustedColor = Color.HSVToRGB(hue, sat, v);
-            _renderer.material.color = _adjustedColor;
+            _computedColor = Color.HSVToRGB(hue, sat, v);
+            _renderer.material.color = _computedColor;
         }
 
-        private void DirectApplyColor(Color inColor)
+        public void DirectApplyColor(Color inColor)
         {
-            _adjustedColor = inColor;
-            _renderer.material.color = _adjustedColor;
+            _computedColor = inColor;
+            _renderer.material.color = _computedColor;
         }
     }
 }

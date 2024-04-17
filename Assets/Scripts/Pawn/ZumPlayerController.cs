@@ -17,6 +17,8 @@ namespace zum
 
         public Cinemachine.CinemachineVirtualCamera cam;
 
+        public ZumThrowCursor ThrowCursor;
+
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
 #endif
@@ -27,6 +29,14 @@ namespace zum
             if (cam != null)
             {
                 cam.Follow = ZapoHelpers.TransformByName(p.transform, "CamRoot");
+
+            }
+            if (ThrowCursor != null)
+            {
+                ThrowCursor.gameObject.transform.SetParent(ZapoHelpers.TransformByName(p.transform, "CamRoot"), false);
+                var deltaPos = new Vector3(0.24f, 0.1f, 0.0f);
+                ThrowCursor.gameObject.transform.SetLocalPositionAndRotation(deltaPos, Quaternion.identity);
+                ThrowCursor.gameObject.transform.localScale = 5f * Vector3.one;
             }
         }
 
@@ -36,6 +46,10 @@ namespace zum
             if (cam != null)
             {
                 cam.Follow = this.transform;
+            }
+            if (ThrowCursor != null)
+            {
+                ThrowCursor.gameObject.transform.parent.SetParent(this.transform, false);
             }
         }
 
@@ -68,6 +82,19 @@ namespace zum
 #else
             Debug.LogError("Starter Assets package is missing dependencies. Please use Tools/Starter Assets/Reinstall Dependencies to fix it");
 #endif
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            if (ThrowCursor != null)
+            {
+                if (PossessedPawn is ZumPawn zp)
+                {
+                    ThrowCursor.SetCursorColor(zp.LaunchColor);
+                    ThrowCursor.SetStrengthAndForward(zp.HasPrime ? zp.ThrowingAmount : -1, zp.transform.forward);
+                }
+            }
         }
     }
 }

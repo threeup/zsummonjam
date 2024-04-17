@@ -1,7 +1,5 @@
 using UnityEngine;
 
-/* Note: animations are called via the controller for both the character and capsule using animator null checks
- */
 
 namespace zapo
 {

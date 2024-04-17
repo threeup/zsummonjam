@@ -12,14 +12,10 @@ namespace zum
         [Header("Player Pointing")]
         [Tooltip("If the character is pointing or not.")]
         public bool WantsPoint = false;
-        [Tooltip("Amount of Pointing Time")]
-        public float PointingAmount = 0;
 
         [Header("Player Throwing")]
         [Tooltip("If the character is throwing or not.")]
         public bool WantsThrow = false;
-        [Tooltip("Amount of Throwing Time")]
-        public float ThrowingAmount = 0;
 
         protected ZapoInputs _input;
 

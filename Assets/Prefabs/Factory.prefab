@@ -55,6 +55,8 @@ MonoBehaviour:
     type: 3}
   doodadProto: {fileID: 3301800285146377853, guid: 76475a4400158224583b89884158d4d6,
     type: 3}
+  cursorProto: {fileID: 3807667028951396689, guid: 1d04b4d37be999e4992f7b1743ead431,
+    type: 3}
   mineralsProto:
   - {fileID: 426657359301192996, guid: 44828e252cce98246a32d7f5bce61e39, type: 3}
   - {fileID: 8961437614665805592, guid: 710f2b3b225478241b73871263fa8819, type: 3}

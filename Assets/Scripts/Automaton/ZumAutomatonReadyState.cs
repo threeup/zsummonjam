@@ -36,7 +36,7 @@ namespace zum
                 ClampToWall(za);
                 MoveToSearchPosition(za);
             }
-            za.MoveTowardTarget(0.25f, true);
+            za.MoveTowardTarget(0.8f * za.Speed, true);
             if (za.CanTargetOther())
             {
                 za.AutomatonMachine.SetState(AutomatonStateType.TARGETING_OTHER);
