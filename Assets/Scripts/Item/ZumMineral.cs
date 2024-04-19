@@ -28,6 +28,7 @@ namespace zum
         public float MaxAttractingSpeed = 5.0f;
         public float AttachedSpeed = 10.0f;
 
+        [SerializeField]
         private ZumPawn _pawn;
 
         private Rigidbody _rb;
@@ -90,7 +91,7 @@ namespace zum
             {
                 return -1.0f;
             }
-            if (!_pawn.IsPointing)
+            if (!_pawn.IsGrabbing)
             {
                 return -1.0f;
             }

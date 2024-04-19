@@ -14,7 +14,8 @@ namespace zum
         public GameObject pawnProto;
         public GameObject automatonProto;
         public GameObject doodadProto;
-        public GameObject cursorProto;
+        public GameObject throwCursorProto;
+        public GameObject grabCursorProto;
 
         public List<GameObject> mineralsProto;
 
@@ -41,11 +42,17 @@ namespace zum
             go.name = "Human" + Time.timeSinceLevelLoad;
             if (go.TryGetComponent<ZumPlayerController>(out var zpc))
             {
-                GameObject cursor = Instantiate(cursorProto);
-                if (cursor.TryGetComponent<ZumThrowCursor>(out var tc))
+                GameObject thcursorGO = Instantiate(throwCursorProto);
+                if (thcursorGO.TryGetComponent<ZumThrowCursor>(out var thcursor))
                 {
-                    zpc.ThrowCursor = tc;
-                    tc.SetStrengthAndForward(-1, Vector3.right);
+                    zpc.ThrowCursor = thcursor;
+                    thcursor.SetStrengthAndForward(-1, Vector3.right);
+                }
+                GameObject grcursorGO = Instantiate(grabCursorProto);
+                if (grcursorGO.TryGetComponent<ZumGrabCursor>(out var grcursor))
+                {
+                    zpc.GrabCursor = grcursor;
+                    grcursor.SetGrabbing(false, Vector3.right);
                 }
             }
 

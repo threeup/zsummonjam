@@ -18,6 +18,7 @@ namespace zum
         public Cinemachine.CinemachineVirtualCamera cam;
 
         public ZumThrowCursor ThrowCursor;
+        public ZumGrabCursor GrabCursor;
 
 #if ENABLE_INPUT_SYSTEM 
         private PlayerInput _playerInput;
@@ -38,6 +39,13 @@ namespace zum
                 ThrowCursor.gameObject.transform.SetLocalPositionAndRotation(deltaPos, Quaternion.identity);
                 ThrowCursor.gameObject.transform.localScale = 5f * Vector3.one;
             }
+            if (GrabCursor != null)
+            {
+                GrabCursor.gameObject.transform.SetParent(ZapoHelpers.TransformByName(p.transform, "CamRoot"), false);
+                var deltaPos = new Vector3(-0.18f, 0.1f, 0.0f);
+                GrabCursor.gameObject.transform.SetLocalPositionAndRotation(deltaPos, Quaternion.identity);
+                GrabCursor.gameObject.transform.localScale = 5f * Vector3.one;
+            }
         }
 
         public override void Dispossess()
@@ -50,6 +58,10 @@ namespace zum
             if (ThrowCursor != null)
             {
                 ThrowCursor.gameObject.transform.parent.SetParent(this.transform, false);
+            }
+            if (GrabCursor != null)
+            {
+                GrabCursor.gameObject.transform.parent.SetParent(this.transform, false);
             }
         }
 
@@ -87,12 +99,17 @@ namespace zum
         protected override void Update()
         {
             base.Update();
-            if (ThrowCursor != null)
+            if (PossessedPawn is ZumPawn zp)
             {
-                if (PossessedPawn is ZumPawn zp)
+                if (ThrowCursor != null)
                 {
-                    ThrowCursor.SetCursorColor(zp.LaunchColor);
+                    ThrowCursor.SetCursorColor(zp.CombinedPrimeColor);
                     ThrowCursor.SetStrengthAndForward(zp.HasPrime ? zp.ThrowingAmount : -1, zp.transform.forward);
+                }
+                if (GrabCursor != null)
+                {
+                    GrabCursor.SetCursorColor(zp.CombinedAttractColor);
+                    GrabCursor.SetGrabbing(zp.IsGrabbing, zp.transform.forward);
                 }
             }
         }

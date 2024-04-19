@@ -128,6 +128,7 @@ namespace zum
             {
                 SetRectPositionToTarget();
                 gameObject.SetActive(false);
+                // ZumHUD.Instance.refresh?
             }
             else if (!gameObject.activeSelf)
             {

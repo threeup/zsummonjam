@@ -9,8 +9,11 @@ namespace zum
     public class ZumHUD : ZapoSingleton<ZumHUD>
     {
         public List<ZumHeldCard> Cards = new();
+
         private Queue<ZumHeldCard> AvailableCards = new();
+        [SerializeField]
         private List<ZumHeldCard> LeftActiveCards = new();
+        [SerializeField]
         private List<ZumHeldCard> RightActiveCards = new();
 
 
@@ -22,20 +25,26 @@ namespace zum
         public void LeftHandRefresh(ref List<ZumMineral> mins)
         {
             List<bool> IndicesFound = new List<bool>();
-            for (int i = 0; i < mins.Count; ++i)
+            for (int minIdx = 0; minIdx < mins.Count; ++minIdx)
             {
                 IndicesFound.Add(false);
             }
-            foreach (var card in LeftActiveCards)
+            for (int cardIdx = LeftActiveCards.Count - 1; cardIdx >= 0; --cardIdx)
             {
-                bool stillActive = false;
-                for (int i = 0; i < mins.Count; ++i)
+                var card = LeftActiveCards[cardIdx];
+                if (card.HeldState == HeldStateType.DISABLED)
                 {
-                    if (mins[i].gameObject.name == card.minName)
+                    UnassignCard(card, true, false);
+                    continue;
+                }
+                bool stillActive = false;
+                for (int minIdx = 0; minIdx < mins.Count; ++minIdx)
+                {
+                    if (mins[minIdx].gameObject.name == card.minName)
                     {
                         stillActive = true;
-                        IndicesFound[i] = true;
-                        card.SetSlot(i, true);
+                        IndicesFound[minIdx] = true;
+                        card.SetSlot(minIdx, true);
                         break;
                     }
                 }
@@ -43,34 +52,34 @@ namespace zum
                 {
                     card.SetSlot(99, true);
                 }
+
             }
             for (int i = 0; i < IndicesFound.Count; ++i)
             {
                 if (!IndicesFound[i])
                 {
-                    var nextCard = TakeAvailableCard(mins[i]);
-                    nextCard.SetSlot(i, true);
-                    LeftActiveCards.Add(nextCard);
+                    TakeAvailableCard(mins[i], i, true);
                 }
             }
         }
         public void RightHandRefresh(ref List<ZumMineral> mins)
         {
             List<bool> IndicesFound = new List<bool>();
-            for (int i = 0; i < mins.Count; ++i)
+            for (int minIdx = 0; minIdx < mins.Count; ++minIdx)
             {
                 IndicesFound.Add(false);
             }
-            foreach (var card in RightActiveCards)
+            for (int cardIdx = RightActiveCards.Count - 1; cardIdx >= 0; --cardIdx)
             {
+                var card = RightActiveCards[cardIdx];
                 bool stillActive = false;
-                for (int i = 0; i < mins.Count; ++i)
+                for (int minIdx = 0; minIdx < mins.Count; ++minIdx)
                 {
-                    if (mins[i].gameObject.name == card.minName)
+                    if (mins[minIdx].gameObject.name == card.minName)
                     {
                         stillActive = true;
-                        IndicesFound[i] = true;
-                        card.SetSlot(i, false);
+                        IndicesFound[minIdx] = true;
+                        card.SetSlot(minIdx, false);
                         break;
                     }
                 }
@@ -83,23 +92,38 @@ namespace zum
             {
                 if (!IndicesFound[i])
                 {
-                    var nextCard = TakeAvailableCard(mins[i]);
-                    nextCard.SetSlot(i, false);
-                    RightActiveCards.Add(nextCard);
+                    TakeAvailableCard(mins[i], i, false);
                 }
             }
         }
 
-        private ZumHeldCard TakeAvailableCard(ZumMineral min)
+        private ZumHeldCard TakeAvailableCard(ZumMineral min, int idx, bool toLeft)
         {
             ZumHeldCard card = AvailableCards.Dequeue();
             card.minName = min.gameObject.name;
             card.AssignValues(min.GetTargetColor());
+            card.SetSlot(idx, toLeft);
+            if (toLeft)
+            {
+                LeftActiveCards.Add(card);
+            }
+            else
+            {
+                RightActiveCards.Add(card);
+            }
             return card;
         }
 
-        private void UnassignCard(ZumHeldCard card)
+        private void UnassignCard(ZumHeldCard card, bool fromLeft = false, bool fromRight = false)
         {
+            if (fromLeft)
+            {
+                LeftActiveCards.Remove(card);
+            }
+            else if (fromRight)
+            {
+                RightActiveCards.Remove(card);
+            }
             card.SetSlot(-1, true);
             AvailableCards.Enqueue(card);
         }
@@ -135,8 +159,11 @@ namespace zum
             }
             if (foundCard)
             {
-                RightActiveCards.Remove(foundCard);
-                UnassignCard(foundCard);
+                UnassignCard(
+                    foundCard,
+                    false, // fromLeft
+                    true // fromRight
+                );
             }
         }
     }

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 using zapo;
 
@@ -11,7 +9,9 @@ namespace zum
     {
         [SerializeField]
         private List<ZumMineral> AttractedMinerals = new();
+        public bool HasAttracted { get { return AttractedMinerals.Count > 0; } }
         public int MaxAttractCount = 8;
+        public Color CombinedAttractColor = Color.black;
 
         [SerializeField]
         private List<ZumMineral> GrabbedMinerals = new();
@@ -22,7 +22,7 @@ namespace zum
         public bool HasPrime { get { return PrimedMinerals.Count > 0; } }
         public int MaxPrimedCount = 4;
 
-        public Color LaunchColor = Color.black;
+        public Color CombinedPrimeColor = Color.black;
 
         [SerializeField]
         private ZapoTimer AttractTimer;
@@ -35,9 +35,10 @@ namespace zum
 
         [Header("Player Pointing")]
         [Tooltip("If the character is pointing or not.")]
-        public bool IsPointing = false;
+        public bool IsGrabbing = false;
+        public bool WasGrabbing = false;
         [Tooltip("Amount of Pointing Time")]
-        public float PointingAmount = 0;
+        public float GrabbingAmount = 0;
 
         [Header("Player Throwing")]
         [Tooltip("If the character is throwing or not.")]
@@ -194,21 +195,32 @@ namespace zum
             {
                 return;
             }
-            IsPointing = _zumCtrlr.WantsPoint;
+            IsGrabbing = _zumCtrlr.WantsPoint;
             IsThrowing = _zumCtrlr.WantsThrow;// && Math.Abs(_ctrlr.MoveVec.x) < 0.5;
             if (_hasAnimator)
             {
-                _animator.SetBool(_animIDPointing, IsPointing);
+                _animator.SetBool(_animIDPointing, IsGrabbing);
                 _animator.SetBool(_animIDThrowing, IsThrowing);
             }
-            if (IsPointing) { PointingAmount += Time.deltaTime; } else { PointingAmount = 0; }
+            if (IsGrabbing) { GrabbingAmount += Time.deltaTime; } else { GrabbingAmount = 0; }
             if (IsThrowing) { ThrowingAmount += Time.deltaTime; }
-            int adjustedPointingAmount = (int)Mathf.Ceil(PointingAmount * 5f);
+            int adjustedGrabbingAmount = (int)Mathf.Ceil(GrabbingAmount * 5f);
             int adjustedThrowingAmount = (int)Mathf.Ceil(ThrowingAmount * 5f);
+
+            if (IsGrabbing)
+            {
+                CombinedAttractColor = GenerateColors(AttractedMinerals);
+            }
+            else if (!IsGrabbing && WasGrabbing)
+            {
+                Debug.Log("Clear attracted");
+                CombinedAttractColor = Color.black;
+                ClearAttractedMinerals();
+            }
             if (IsThrowing && !WasThrowing)
             {
                 PrimeGrabbedMinerals();
-                PrepAutomatonLaunch();
+                CombinedPrimeColor = GenerateColors(PrimedMinerals);
             }
             else if (!IsThrowing && WasThrowing)
             {
@@ -220,10 +232,11 @@ namespace zum
             }
             if (_hasAnimator)
             {
-                _animator.SetInteger(_animIDPointingAmount, adjustedPointingAmount);
+                _animator.SetInteger(_animIDPointingAmount, adjustedGrabbingAmount);
                 _animator.SetInteger(_animIDThrowingAmount, adjustedThrowingAmount);
             }
             WasThrowing = IsThrowing;
+            WasGrabbing = IsGrabbing;
         }
 
         private void CameraRotation()
@@ -482,6 +495,15 @@ namespace zum
             AttractedMinerals.Remove(min);
         }
 
+        public void ClearAttractedMinerals()
+        {
+            foreach (var min in AttractedMinerals)
+            {
+                min.AssociateTo(null);
+            }
+            AttractedMinerals.Clear();
+        }
+
         public Vector3 GetMineralTargetPos(ZumMineral min)
         {
             if (AttractedMinerals.Contains(min))
@@ -499,15 +521,14 @@ namespace zum
             return Vector3.zero;
         }
 
-        public void PrepAutomatonLaunch()
+        private Color GenerateColors(List<ZumMineral> mineralList)
         {
-            if (PrimedMinerals.Count == 0)
+            if (mineralList.Count == 0)
             {
-                LaunchColor = Color.black;
-                return;
+                return Color.black;
             }
             List<Color> colors = new() { Color.black };
-            foreach (var pm in PrimedMinerals)
+            foreach (var pm in mineralList)
             {
                 var zm = pm.GetComponentInChildren<ZumMaterial>();
                 if (zm != null)
@@ -517,24 +538,26 @@ namespace zum
             }
 
 
-            float atkVsRed = 0.0f;
-            float atkVsGreen = 0.0f;
-            float atkVsBlue = 0.0f;
+            float maxRed = 0.0f;
+            float maxGreen = 0.0f;
+            float maxBlue = 0.0f;
             foreach (Color c in colors)
             {
-                atkVsRed = Math.Max(atkVsRed, c.r);
-                atkVsGreen = Math.Max(atkVsGreen, c.g);
-                atkVsBlue = Math.Max(atkVsBlue, c.b);
+                maxRed = Math.Max(maxRed, c.r);
+                maxGreen = Math.Max(maxGreen, c.g);
+                maxBlue = Math.Max(maxBlue, c.b);
             }
-            LaunchColor = new Color(atkVsRed, atkVsGreen, atkVsBlue);
+            return new Color(maxRed, maxGreen, maxBlue);
         }
 
         public void DoAutomatonLaunch()
         {
 
             string name = "Dragon-" + this.name;
-            GameObject go = ZumFactory.Instance.CreateAutomaton(name, ThrowHandTransform.position,
-                transform.rotation, ThrowingAmount, LaunchColor.r, LaunchColor.g, LaunchColor.b);
+            GameObject go = ZumFactory.Instance.CreateAutomaton(name,
+                ThrowHandTransform.position,
+                transform.rotation, ThrowingAmount,
+                CombinedPrimeColor.r, CombinedPrimeColor.g, CombinedPrimeColor.b);
             ZumBoss.Instance.Automatons.Add(go);
 
             while (PrimedMinerals.Count > 0)
@@ -560,7 +583,7 @@ namespace zum
 
             }
 
-            if (IsPointing && AttractTimer.TimerTick(Time.deltaTime))
+            if (IsGrabbing && AttractTimer.TimerTick(Time.deltaTime))
             {
                 Vector3 center = GrabHandTransform.position;
                 GameObject[] gos = ZumFactory.Instance.GetSphereOverlapsItem(center, 5.0f);
